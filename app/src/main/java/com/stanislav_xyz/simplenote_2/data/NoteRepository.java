@@ -39,7 +39,6 @@ public class NoteRepository {
 
 
     private static class insertAsyncTask extends AsyncTask<Note, Void, Void> {
-
         private NoteDao mAsyncTaskDao;
 
         // Конструктор
@@ -56,7 +55,6 @@ public class NoteRepository {
 
 
     private static class deleteAsyncTask extends AsyncTask<Note, Void, Void> {
-
         private NoteDao mAsyncTaskDao;
 
         // Конструктор
@@ -73,10 +71,9 @@ public class NoteRepository {
 
 
     private static class updateAsyncTask extends AsyncTask<Note, Void, Void> {
-
         private NoteDao mAsyncTaskDao;
 
-        // Консруктор
+        // Конструктор
         public updateAsyncTask(NoteDao noteDao) {
             mAsyncTaskDao = noteDao;
         }
@@ -87,5 +84,4 @@ public class NoteRepository {
             return null;
         }
     }
-
 }

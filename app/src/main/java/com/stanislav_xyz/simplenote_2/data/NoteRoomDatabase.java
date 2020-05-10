@@ -58,7 +58,10 @@ public abstract class NoteRoomDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(Void... voids) {
             for (int i = 0; i < titles.length; i++) {
-                Note note = new Note(titles[i], titles[i], dates[i], titles[i]);
+                Note note = new Note();
+                note.title = titles[i];
+                note.body = titles[i];
+                note.date = dates[i];
                 mNoteDao.insert(note);
             }
             return null;

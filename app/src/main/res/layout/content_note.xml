@@ -5,14 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
+    android:paddingStart="4dp"
+    android:paddingLeft="4dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:id="@+id/note_textView"
+    <EditText
+        android:id="@+id/note_editText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        tools:text="Text for testing"/>
+        android:gravity="top|start"
+        android:hint="@string/note_hint_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textIsSelectable="false" />
 
 </LinearLayout>

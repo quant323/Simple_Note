@@ -3,19 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/folder_group">
+
+<!--        <item
+            android:id="@+id/nav_home_folder"
+            android:title="@string/nav_home_folder"
+            android:icon="@drawable/ic_home"
+            android:orderInCategory="1"/>-->
+
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_bin"
+            android:title="@string/nav_bin"
+            android:icon="@drawable/ic_delete"
+            android:orderInCategory="1000"/>
+
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:id="@+id/nav_settings"
+            android:title="@string/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:orderInCategory="1010"/>
+
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_about"
+            android:title="@string/nav_about"
+            android:icon="@drawable/ic_info"
+            android:orderInCategory="1020"/>
 
     </group>
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_add_new_folder"
+            android:title="@string/nav_add_new_folder"
+            android:icon="@drawable/ic_add"
+            android:orderInCategory="1030"/>
+
+    </group>
+
 </menu>

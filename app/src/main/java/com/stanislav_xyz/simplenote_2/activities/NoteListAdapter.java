@@ -2,10 +2,12 @@ package com.stanislav_xyz.simplenote_2.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.provider.ContactsContract;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stanislav_xyz.simplenote_2.R;
@@ -17,6 +19,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolder> {
+
+    public static final int CONTEXT_OPEN_ID = 100;
+    public static final int CONTEXT_DEL_ID = 101;
+    public static final int CONTEXT_MOVE_ID = 102;
 
     private List<Note> mNotes;
 
@@ -48,7 +54,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     }
 
 
-    class NoteViewHolder extends RecyclerView.ViewHolder {
+    class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final TextView noteTitle_tV;
         private final TextView date_tv;
@@ -66,12 +72,21 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
                             mNotes.get(getAdapterPosition()));
                 }
             });
+
+            itemView.setOnCreateContextMenuListener(this);
         }
 
 
-        public void bind(Note note) {
+        private void bind(Note note) {
             noteTitle_tV.setText(note.title);
             date_tv.setText(String.valueOf(note.date));
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(this.getAdapterPosition(), CONTEXT_OPEN_ID, 0, R.string.action_context_open);
+            menu.add(this.getAdapterPosition(), CONTEXT_DEL_ID, 0, R.string.action_context_delete);
+            menu.add(this.getAdapterPosition(), CONTEXT_MOVE_ID, 0, R.string.action_context_move);
         }
     }
 

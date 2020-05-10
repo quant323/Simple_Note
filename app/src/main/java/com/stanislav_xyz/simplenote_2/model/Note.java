@@ -10,6 +10,10 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "note_table")
 public class Note implements Parcelable {
 
+    public Note() {
+
+    }
+
     @PrimaryKey(autoGenerate = true)
     public int udi;
 
@@ -24,14 +28,6 @@ public class Note implements Parcelable {
 
     @ColumnInfo
     public String folder;
-
-    public Note(String title, String body, long date, String folder) {
-        this.title = title;
-        this.body = body;
-        this.date = date;
-        this.folder = folder;
-    }
-
 
     protected Note(Parcel in) {
         udi = in.readInt();
