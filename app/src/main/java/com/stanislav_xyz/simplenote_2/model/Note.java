@@ -10,24 +10,68 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "note_table")
 public class Note implements Parcelable {
 
-    public Note() {
+    @PrimaryKey(autoGenerate = true)
+    private int udi;
 
+    @ColumnInfo
+    private String body;
+
+    @ColumnInfo
+    private String title;
+
+    @ColumnInfo
+    private long date;
+
+    @ColumnInfo
+    private String folder;
+
+    public Note(String body, String title, long date, String folder) {
+        this.body = body;
+        this.title = title;
+        this.date = date;
+        this.folder = folder;
     }
 
-    @PrimaryKey(autoGenerate = true)
-    public int udi;
+    public String getBody() {
+        return body;
+    }
 
-    @ColumnInfo
-    public String title;
+    public String getTitle() {
+        return title;
+    }
 
-    @ColumnInfo
-    public String body;
+    public long getDate() {
+        return date;
+    }
 
-    @ColumnInfo
-    public long date;
+    public String getFolder() {
+        return folder;
+    }
 
-    @ColumnInfo
-    public String folder;
+    public int getUdi() {
+        return udi;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public void setFolder(String folder) {
+        this.folder = folder;
+    }
+
+    public void setUdi(int udi) {
+        this.udi = udi;
+    }
+
 
     protected Note(Parcel in) {
         udi = in.readInt();

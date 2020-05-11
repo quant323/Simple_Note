@@ -25,6 +25,10 @@ public class NoteRepository {
         return mAllNotes;
     }
 
+    public LiveData<List<Note>> getNotesFromFolder(String folder) {
+        return mNoteDao.getNotesFromFolder(folder);
+    }
+
     public void insert(Note note) {
         new insertAsyncTask(mNoteDao).execute(note);
     }

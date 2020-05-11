@@ -2,19 +2,18 @@ package com.stanislav_xyz.simplenote_2.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public class WorkWithSharedPref {
 
-    Context mContext;
+    private Context mContext;
 
     // Конструктор
     public WorkWithSharedPref(Context context) {
@@ -40,12 +39,6 @@ public class WorkWithSharedPref {
         String json = sharedPreferences.getString(APP_PREFERENCES_FOLDERS, null);
         Type type = new TypeToken<List<Folder>>(){}.getType();
         folderList = gson.fromJson(json, type);
-
-//        if (folderList == null) {
-//            Folder folder = new Folder(getString(R.string.default_folder_name), System.currentTimeMillis());
-//            folderList = new ArrayList<>();
-//            folderList.add(folder);
-//        }
         return folderList;
     }
 

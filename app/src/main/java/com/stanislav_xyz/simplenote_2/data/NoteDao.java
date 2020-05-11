@@ -27,4 +27,7 @@ public interface NoteDao {
     @Query("SELECT * FROM note_table")
     LiveData<List<Note>> getAllNotes();
 
+    @Query("SELECT * FROM note_table WHERE folder = :folder ORDER BY date DESC")
+    LiveData<List<Note>> getNotesFromFolder(String folder);
+
 }

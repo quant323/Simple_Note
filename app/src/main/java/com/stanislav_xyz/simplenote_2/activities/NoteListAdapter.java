@@ -1,13 +1,10 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.stanislav_xyz.simplenote_2.R;
@@ -69,7 +66,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
                 @Override
                 public void onClick(View v) {
                     NoteActivity.startThisActivity((Activity) itemView.getContext(),
-                            mNotes.get(getAdapterPosition()));
+                            mNotes.get(getAdapterPosition()), null);
                 }
             });
 
@@ -78,8 +75,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
 
         private void bind(Note note) {
-            noteTitle_tV.setText(note.title);
-            date_tv.setText(String.valueOf(note.date));
+            noteTitle_tV.setText(note.getTitle());
+            date_tv.setText(String.valueOf(note.getDate()));
         }
 
         @Override

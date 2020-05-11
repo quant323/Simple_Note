@@ -33,14 +33,19 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String TAG = "myTag";
+    private static final int INITIAL_FOLDER_ID = 0;
+
     private NoteViewModel mNoteViewModel;
     private NoteListAdapter mAdapter;
     private NavigationView mNavigationView;
     private DrawerLayout mDrawer;
     private WorkWithSharedPref mSharedPref;
+    private RecyclerView mRecyclerView;
 
     private List<Note> mNotes;
     private List<Folder> mFolderList;
+    private Folder mCurFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,48 +55,32 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Инициализируем RecyclerView
+        initializeRecyclerView();
+
+        // Инициализируем список папок
+        initializeFolderList();
+
+        // Инициализируем Drawer меню
+        initializeDrawer(toolbar);
+
+        // Инициализация ViewModel
+        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        getNotes();
+
+//        mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+//            @Override
+//            public void onChanged(List<Note> notes) {
+//                mNotes = notes;
+//                mAdapter.setNotes(mNotes);
+//            }
+//        });
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NoteActivity.startThisActivity(MainActivity.this, null);
-            }
-        });
-
-        mDrawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
-        mDrawer.addDrawerListener(toggle);
-        toggle.syncState();
-        mNavigationView = findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        mAdapter = new NoteListAdapter();
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL));
-
-        mSharedPref = new WorkWithSharedPref(this);
-        mFolderList = mSharedPref.loadFromSharedPref();
-        if (mFolderList == null) {
-            Folder folder = new Folder(getString(R.string.default_folder_name), System.currentTimeMillis(), 300);
-            mFolderList = new ArrayList<>();
-            mFolderList.add(folder);
-        }
-        // Инициализируем пункты Drawer меню
-        initializeFolders();
-
-        // Инициализация ViewModel
-        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-        mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
-            @Override
-            public void onChanged(List<Note> notes) {
-                mNotes = notes;
-                mAdapter.setNotes(mNotes);
+                NoteActivity.startThisActivity(MainActivity.this, null, mCurFolder.getName());
             }
         });
     }
@@ -122,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         int position = item.getGroupId();
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                NoteActivity.startThisActivity(this, mNotes.get(position));
+                NoteActivity.startThisActivity(this, mNotes.get(position), null);
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
                 mNoteViewModel.deleteNote(mNotes.get(position));
@@ -138,28 +127,73 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
+        int id = item.getItemId();
+        switch (id) {
             case R.id.nav_bin:
                 Toast.makeText(this, "Bin folder is pressed!", Toast.LENGTH_SHORT).show();
+                setTitle(R.string.nav_bin);
                 break;
             case R.id.nav_settings:
                 Toast.makeText(this, "Settings folder is pressed!", Toast.LENGTH_SHORT).show();
+                setTitle(R.string.nav_settings);
                 break;
             case R.id.nav_about:
                 Toast.makeText(this, "About folder is pressed!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_add_new_folder:
-                createNewFolder();
+                new FolderDialog(this, new FolderDialog.FolderDialogListener() {
+                    @Override
+                    public void onFolderConfirm(String name) {
+                        createNewFolder(name);
+                    }
+                }).show(getSupportFragmentManager(), null);
                 break;
             default:
+                mCurFolder = getPressedFolder(id);
+                getNotes();
+                setTitle(mCurFolder.getName());
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void initializeFolders() {
+    private void initializeRecyclerView() {
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mAdapter = new NoteListAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL));
+    }
+
+    private void initializeFolderList() {
+        mSharedPref = new WorkWithSharedPref(this);
+        mFolderList = mSharedPref.loadFromSharedPref();
+        if (mFolderList == null) {
+            Folder folder = new Folder(getString(R.string.default_folder_name),
+                    System.currentTimeMillis(), INITIAL_FOLDER_ID);
+            mFolderList = new ArrayList<>();
+            mFolderList.add(folder);
+        }
+        // Устанавливаем папку по-умолчанию - первую папку
+        mCurFolder = mFolderList.get(0);
+        // Устанавливаем имя папки в Toolbar
+        setTitle(mCurFolder.getName());
+    }
+
+    private void initializeDrawer(Toolbar toolbar) {
+        mDrawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+        mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+        // Устанавливаем пункты меню
         Menu menu = mNavigationView.getMenu();
         for (int i = 0; i < mFolderList.size(); i++) {
             if (i != 0) {
@@ -174,20 +208,40 @@ public class MainActivity extends AppCompatActivity
 
     // Добавляет пункт меню в Drawer
     private MenuItem addMenuItem(Menu menu, Folder folder) {
-        return menu.add(R.id.folder_group, folder.id, menu.NONE, folder.name)
+        return menu.add(R.id.folder_group, folder.getId(), menu.NONE, folder.getName())
                 .setIcon(R.drawable.ic_folder)
                 .setCheckable(true);
     }
 
-    private void createNewFolder() {
+    private void createNewFolder(String name) {
         // Находим папку, находящуюся в списке последней
         Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
         // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
-        Folder newFolder = new Folder("New Folder", System.currentTimeMillis(), (lastFolder.id + 1));
-        Toast.makeText(this, "Folder id is: " + newFolder.id, Toast.LENGTH_SHORT).show();
-        mFolderList.add(newFolder);
+        mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
+        mFolderList.add(mCurFolder);
         mSharedPref.saveInSharedPref(mFolderList);
         Menu menu = mNavigationView.getMenu();
-        addMenuItem(menu, newFolder).setChecked(true);
+        addMenuItem(menu, mCurFolder).setChecked(true);
+        setTitle(mCurFolder.getName());
     }
+
+    // Возвращает нажатую папку по id
+    private Folder getPressedFolder(int id) {
+        for (int i = 0; i < mFolderList.size(); i++) {
+            if (mFolderList.get(i).getId() == id)
+                return mFolderList.get(i);
+        }
+        return mFolderList.get(0);
+    }
+
+    private void getNotes() {
+        mNoteViewModel.getNotesFromFolder(mCurFolder.getName()).observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                mNotes = notes;
+                mAdapter.setNotes(mNotes);
+            }
+        });
+    }
+
 }

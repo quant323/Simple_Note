@@ -11,7 +11,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Note.class}, version = 2, exportSchema = false)
+@Database(entities = {Note.class}, version = 3, exportSchema = false)
 public abstract class NoteRoomDatabase extends RoomDatabase {
 
     private static NoteRoomDatabase INSTANCE;
@@ -45,27 +45,27 @@ public abstract class NoteRoomDatabase extends RoomDatabase {
 
 
     // Первичное заполнение базы данных
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-
-        private NoteDao mNoteDao;
-        String[] titles = {"first note", "second note", "third note"};
-        long[] dates = {23423, 23423423, 234324};
-
-        PopulateDbAsync(NoteRoomDatabase db) {
-            mNoteDao = db.noteDao();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            for (int i = 0; i < titles.length; i++) {
-                Note note = new Note();
-                note.title = titles[i];
-                note.body = titles[i];
-                note.date = dates[i];
-                mNoteDao.insert(note);
-            }
-            return null;
-        }
-    }
+//    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
+//
+//        private NoteDao mNoteDao;
+//        String[] titles = {"first note", "second note", "third note"};
+//        long[] dates = {23423, 23423423, 234324};
+//
+//        PopulateDbAsync(NoteRoomDatabase db) {
+//            mNoteDao = db.noteDao();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            for (int i = 0; i < titles.length; i++) {
+//                Note note = new Note();
+//                note.setTitle(titles[i]);
+//                note.setBody(titles[i]);
+//                note.setDate(dates[i]);
+//                mNoteDao.insert(note);
+//            }
+//            return null;
+//        }
+//    }
 
 }

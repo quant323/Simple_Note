@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,22 +26,24 @@ import android.widget.Toast;
 
 public class NoteActivity extends AppCompatActivity {
 
-    private static final String TAG = "myTag";
     private static final String EXTRA_NOTE = "NoteActivity.EXTRA_NOTE";
+    private static final String EXTRA_FOLDER = "NoteActivity.EXTRA_FOLDER";
     private static final int MAX_TITLE_LENGTH = 20;
 
     private EditText mNoteEditText;
     private Note mNote;
     private NoteViewModel mNoteViewModel;
-    private String mFolder = "Home Folder";
+    private String mFolder;
     private InputMethodManager mMethodManager;
     private boolean mRequireSaving = true;
 
     // Метод для вызова этого Активити из других Activity
-    public static void startThisActivity(Activity activity, Note note) {
+    public static void startThisActivity(Activity activity, Note note, String folder) {
         Intent intent = new Intent(activity, NoteActivity.class);
         if (note != null)
             intent.putExtra(EXTRA_NOTE, note);
+        if (folder != null)
+            intent.putExtra(EXTRA_FOLDER, folder);
         activity.startActivity(intent);
     }
 
@@ -78,12 +81,15 @@ public class NoteActivity extends AppCompatActivity {
         int textColor = mNoteEditText.getCurrentTextColor();
         if (getIntent().hasExtra(EXTRA_NOTE)) {
             mNote = getIntent().getParcelableExtra(EXTRA_NOTE);
-            mNoteEditText.setText(mNote.body);
+            mNoteEditText.setText(mNote.getBody());
             // Превращает EditText в TextView
             mNoteEditText.setEnabled(false);
             mNoteEditText.setCursorVisible(false);
             mNoteEditText.setTextColor(textColor);
-        } else {
+        }
+
+        if (getIntent().hasExtra(EXTRA_FOLDER)) {
+            mFolder = getIntent().getStringExtra(EXTRA_FOLDER);
             // Показывает клавиатуру
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             fab.hide();
@@ -115,24 +121,24 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     // Устанавливает новые данные для заметки
-    private Note setNoteValues(Note note) {
-        note.body = mNoteEditText.getText().toString();
-        note.title = getTitle(note.body);
-        note.folder = mFolder;
-        note.date = System.currentTimeMillis();
+    private Note setNewValues(Note note, String body) {
+        note.setBody(body);
+        note.setTitle(getTitle(body));
+        note.setDate(System.currentTimeMillis());
         return note;
     }
 
     // Сохраняет новую, либо обновляет существующую заметку
     private void saveNote() {
+        String body = mNoteEditText.getText().toString();
         if (mNote != null) {
-            if (!mNote.body.equals(mNoteEditText.getText().toString())) {
-                mNoteViewModel.update(setNoteValues(mNote));
+            if (!mNote.getBody().equals(body)) {
+                mNoteViewModel.update(setNewValues(mNote, body));
                 Toast.makeText(this, "Updating...", Toast.LENGTH_SHORT).show();
             }
         } else {
-            if (!mNoteEditText.getText().toString().equals("")) {
-                mNote = setNoteValues(new Note());
+            if (!body.equals("")) {
+                mNote = new Note(body, getTitle(body), System.currentTimeMillis(), mFolder);
                 mNoteViewModel.insert(mNote);
                 Toast.makeText(this, "Inserting...", Toast.LENGTH_SHORT).show();
             }
@@ -147,13 +153,6 @@ public class NoteActivity extends AppCompatActivity {
         } else {
             return arr[0].substring(0, MAX_TITLE_LENGTH);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // скрывает клавиатуру
-//        mMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     @Override
