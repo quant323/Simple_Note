@@ -1,10 +1,7 @@
 package com.stanislav_xyz.simplenote_2.data;
 
 import android.content.Context;
-import android.os.AsyncTask;
-
 import com.stanislav_xyz.simplenote_2.model.Note;
-
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -39,33 +36,6 @@ public abstract class NoteRoomDatabase extends RoomDatabase {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
-//            new PopulateDbAsync(INSTANCE).execute();
         }
     };
-
-
-    // Первичное заполнение базы данных
-//    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-//
-//        private NoteDao mNoteDao;
-//        String[] titles = {"first note", "second note", "third note"};
-//        long[] dates = {23423, 23423423, 234324};
-//
-//        PopulateDbAsync(NoteRoomDatabase db) {
-//            mNoteDao = db.noteDao();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            for (int i = 0; i < titles.length; i++) {
-//                Note note = new Note();
-//                note.setTitle(titles[i]);
-//                note.setBody(titles[i]);
-//                note.setDate(dates[i]);
-//                mNoteDao.insert(note);
-//            }
-//            return null;
-//        }
-//    }
-
 }

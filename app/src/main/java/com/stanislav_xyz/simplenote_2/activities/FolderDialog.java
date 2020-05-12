@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.stanislav_xyz.simplenote_2.R;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -30,10 +32,10 @@ public class FolderDialog extends AppCompatDialogFragment {
         final EditText newFolderName_ET = new EditText(context);
         newFolderName_ET.setLayoutParams(new LinearLayout.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        newFolderName_ET.setHint("Name");
+        newFolderName_ET.setHint(R.string.d_create_folder_hint);
 
         return new AlertDialog.Builder(context)
-                .setMessage("Add New Folder")
+                .setMessage(R.string.nav_add_new_folder)
                 .setView(newFolderName_ET)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
