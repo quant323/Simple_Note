@@ -2,7 +2,6 @@ package com.stanislav_xyz.simplenote_2.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +26,7 @@ public class WorkWithSharedPref {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(folderList);
+        java.lang.String json = gson.toJson(folderList);
         editor.putString(APP_PREFERENCES_FOLDERS, json);
         editor.apply();
     }
@@ -36,7 +35,7 @@ public class WorkWithSharedPref {
         List<Folder> folderList;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = sharedPreferences.getString(APP_PREFERENCES_FOLDERS, null);
+        java.lang.String json = sharedPreferences.getString(APP_PREFERENCES_FOLDERS, null);
         Type type = new TypeToken<List<Folder>>(){}.getType();
         folderList = gson.fromJson(json, type);
         return folderList;

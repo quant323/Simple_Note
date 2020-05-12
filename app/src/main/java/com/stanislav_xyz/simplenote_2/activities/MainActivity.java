@@ -1,6 +1,7 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
 
     private List<Note> mNotes;
+    private List<Note> mNotesInCurFolder;
     private List<Folder> mFolderList;
     private Folder mCurFolder;
 
@@ -52,8 +54,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toast.makeText(this, "onCreate()", Toast.LENGTH_SHORT).show();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mNotesInCurFolder = new ArrayList<>();
 
         // Инициализируем RecyclerView
         initializeRecyclerView();
@@ -66,15 +72,15 @@ public class MainActivity extends AppCompatActivity
 
         // Инициализация ViewModel
         mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-        getNotes();
 
-//        mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
-//            @Override
-//            public void onChanged(List<Note> notes) {
-//                mNotes = notes;
-//                mAdapter.setNotes(mNotes);
-//            }
-//        });
+        mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                Log.d(TAG, "onChanged: ");
+                mNotes = notes;
+                updateNoteList();
+            }
+        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +89,17 @@ public class MainActivity extends AppCompatActivity
                 NoteActivity.startThisActivity(MainActivity.this, null, mCurFolder.getName());
             }
         });
+    }
+
+    // Собирает Notes, относящиеся к текущей папке и передает их в RecyclerView
+    private void updateNoteList() {
+        mNotesInCurFolder.clear();
+        for (int i = 0; i < mNotes.size(); i++) {
+            if (mNotes.get(i).getFolder().equals(mCurFolder.getName())) {
+                mNotesInCurFolder.add(mNotes.get(i));
+            }
+        }
+        mAdapter.setNotes(mNotesInCurFolder);
     }
 
     @Override
@@ -99,7 +116,6 @@ public class MainActivity extends AppCompatActivity
                 mSharedPref.cleanFromSharedPref();
                 return true;
             case R.id.action_rename_folder:
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -111,10 +127,10 @@ public class MainActivity extends AppCompatActivity
         int position = item.getGroupId();
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                NoteActivity.startThisActivity(this, mNotes.get(position), null);
+                NoteActivity.startThisActivity(this, mNotesInCurFolder.get(position), null);
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
-                mNoteViewModel.deleteNote(mNotes.get(position));
+                mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
                 Snackbar.make(findViewById(R.id.coordinator_main), "Moving..." + item.getGroupId(),
@@ -143,14 +159,14 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_add_new_folder:
                 new FolderDialog(this, new FolderDialog.FolderDialogListener() {
                     @Override
-                    public void onFolderConfirm(String name) {
+                    public void onFolderConfirm(java.lang.String name) {
                         createNewFolder(name);
                     }
                 }).show(getSupportFragmentManager(), null);
                 break;
             default:
                 mCurFolder = getPressedFolder(id);
-                getNotes();
+                updateNoteList();
                 setTitle(mCurFolder.getName());
                 break;
         }
@@ -213,13 +229,14 @@ public class MainActivity extends AppCompatActivity
                 .setCheckable(true);
     }
 
-    private void createNewFolder(String name) {
+    private void createNewFolder(java.lang.String name) {
         // Находим папку, находящуюся в списке последней
         Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
         // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
         mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
         mFolderList.add(mCurFolder);
         mSharedPref.saveInSharedPref(mFolderList);
+        updateNoteList();
         Menu menu = mNavigationView.getMenu();
         addMenuItem(menu, mCurFolder).setChecked(true);
         setTitle(mCurFolder.getName());
@@ -232,16 +249,6 @@ public class MainActivity extends AppCompatActivity
                 return mFolderList.get(i);
         }
         return mFolderList.get(0);
-    }
-
-    private void getNotes() {
-        mNoteViewModel.getNotesFromFolder(mCurFolder.getName()).observe(this, new Observer<List<Note>>() {
-            @Override
-            public void onChanged(List<Note> notes) {
-                mNotes = notes;
-                mAdapter.setNotes(mNotes);
-            }
-        });
     }
 
 }

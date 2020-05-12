@@ -24,10 +24,13 @@ public interface NoteDao {
     @Delete
     void delete(Note note);
 
-    @Query("SELECT * FROM note_table")
+    @Query("SELECT * FROM note_table ORDER BY date DESC")
     LiveData<List<Note>> getAllNotes();
 
     @Query("SELECT * FROM note_table WHERE folder = :folder ORDER BY date DESC")
-    LiveData<List<Note>> getNotesFromFolder(String folder);
+    LiveData<List<Note>> getNotesFromFolderLive(String folder);
+
+    @Query("SELECT * FROM note_table WHERE folder = :folder ORDER BY date DESC")
+    List<Note> getNotesFromFolder(String folder);
 
 }

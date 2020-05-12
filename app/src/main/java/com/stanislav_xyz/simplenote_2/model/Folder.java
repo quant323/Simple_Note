@@ -6,7 +6,7 @@ public class Folder {
     private String name;
     private long date;
 
-    public Folder(String name, long date, int id) {
+    public Folder(java.lang.String name, long date, int id) {
         this.id = id;
         this.name = name;
         this.date = date;

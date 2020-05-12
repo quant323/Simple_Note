@@ -134,13 +134,11 @@ public class NoteActivity extends AppCompatActivity {
         if (mNote != null) {
             if (!mNote.getBody().equals(body)) {
                 mNoteViewModel.update(setNewValues(mNote, body));
-                Toast.makeText(this, "Updating...", Toast.LENGTH_SHORT).show();
             }
         } else {
             if (!body.equals("")) {
                 mNote = new Note(body, getTitle(body), System.currentTimeMillis(), mFolder);
                 mNoteViewModel.insert(mNote);
-                Toast.makeText(this, "Inserting...", Toast.LENGTH_SHORT).show();
             }
         }
     }
