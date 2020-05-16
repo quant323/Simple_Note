@@ -1,7 +1,6 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -14,10 +13,10 @@ import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
+import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 import com.stanislav_xyz.simplenote_2.utils.WorkWithSharedPref;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -40,10 +39,9 @@ public class MainActivity extends AppCompatActivity
 
     private NoteViewModel mNoteViewModel;
     private NoteListAdapter mAdapter;
-    private NavigationView mNavigationView;
     private DrawerLayout mDrawer;
     private WorkWithSharedPref mSharedPref;
-    private RecyclerView mRecyclerView;
+    private Menu mNavigationMenu;
 
     private List<Note> mNotes;
     private List<Note> mNotesInCurFolder;
@@ -75,7 +73,6 @@ public class MainActivity extends AppCompatActivity
         mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
-                Log.d(TAG, "onChanged: ");
                 mNotes = notes;
                 updateNoteList();
             }
@@ -85,7 +82,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NoteActivity.startThisActivity(MainActivity.this, null, mCurFolder.getName());
+                ActivityStarter.startNoteActivity(MainActivity.this, mCurFolder.getName());
             }
         });
     }
@@ -112,9 +109,25 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete_folder:
-                mSharedPref.cleanFromSharedPref();
+                if (mNotesInCurFolder.size() < 1) {
+                    deleteFolder(mCurFolder);
+                    mCurFolder = mFolderList.get(0);
+                    setTitle(mCurFolder.getName());
+                    mNavigationMenu.findItem(mCurFolder.getId()).setChecked(true);
+                    updateNoteList();
+                } else {
+                    Toast.makeText(this, R.string.mes_folder_is_not_empty, Toast.LENGTH_SHORT).show();
+                }
                 return true;
             case R.id.action_rename_folder:
+                String message = getString(R.string.action_rename_folder);
+                new FolderDialog(this, message, mCurFolder.getName(),
+                        new FolderDialog.FolderDialogListener() {
+                            @Override
+                            public void onFolderConfirm(String name) {
+                                renameFolder(name, mCurFolder);
+                            }
+                        }).show(getSupportFragmentManager(), null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -123,13 +136,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int position = item.getGroupId();
+        final int position = item.getGroupId();
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                NoteActivity.startThisActivity(this, mNotesInCurFolder.get(position), null);
+                ActivityStarter.startNoteActivity(this, mNotesInCurFolder.get(position));
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
-                mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
+                new DeleteDialog(this, new DeleteDialog.DeleteDialogListener() {
+                    @Override
+                    public void onDeleteConfirm() {
+                        mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
+                    }
+                }).show(getSupportFragmentManager(), null);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
                 Snackbar.make(findViewById(R.id.coordinator_main), "Moving..." + item.getGroupId(),
@@ -156,9 +174,10 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "About folder is pressed!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_add_new_folder:
-                new FolderDialog(this, new FolderDialog.FolderDialogListener() {
+                String message = getString(R.string.nav_add_new_folder);
+                new FolderDialog(this, message, new FolderDialog.FolderDialogListener() {
                     @Override
-                    public void onFolderConfirm(java.lang.String name) {
+                    public void onFolderConfirm(String name) {
                         createNewFolder(name);
                     }
                 }).show(getSupportFragmentManager(), null);
@@ -174,12 +193,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeRecyclerView() {
-        mRecyclerView = findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         mAdapter = new NoteListAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
     }
 
@@ -205,16 +224,16 @@ public class MainActivity extends AppCompatActivity
 
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
-        mNavigationView = findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         // Устанавливаем пункты меню
-        Menu menu = mNavigationView.getMenu();
+        mNavigationMenu = navigationView.getMenu();
         for (int i = 0; i < mFolderList.size(); i++) {
             if (i != 0) {
-                addMenuItem(menu, mFolderList.get(i));
+                addMenuItem(mNavigationMenu, mFolderList.get(i));
             } else {
-                addMenuItem(menu, mFolderList.get(i))
+                addMenuItem(mNavigationMenu, mFolderList.get(i))
                         .setIcon(R.drawable.ic_home)
                         .setChecked(true);
             }
@@ -228,7 +247,7 @@ public class MainActivity extends AppCompatActivity
                 .setCheckable(true);
     }
 
-    private void createNewFolder(java.lang.String name) {
+    private void createNewFolder(String name) {
         // Находим папку, находящуюся в списке последней
         Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
         // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
@@ -236,9 +255,26 @@ public class MainActivity extends AppCompatActivity
         mFolderList.add(mCurFolder);
         mSharedPref.saveInSharedPref(mFolderList);
         updateNoteList();
-        Menu menu = mNavigationView.getMenu();
-        addMenuItem(menu, mCurFolder).setChecked(true);
+        addMenuItem(mNavigationMenu, mCurFolder).setChecked(true);
         setTitle(mCurFolder.getName());
+    }
+
+    private void renameFolder(String name, Folder folder) {
+        folder.setName(name);
+        mSharedPref.saveInSharedPref(mFolderList);
+        setTitle(folder.getName());
+        // Обновляем Notes в БД
+        for (Note note : mNotesInCurFolder) {
+            note.setFolder(folder.getName());
+            mNoteViewModel.update(note);
+        }
+        mNavigationMenu.getItem(folder.getId()).setTitle(folder.getName());
+    }
+
+    private void deleteFolder(Folder folder) {
+        mNavigationMenu.removeItem(folder.getId());
+        mFolderList.remove(folder);
+        mSharedPref.saveInSharedPref(mFolderList);
     }
 
     // Возвращает нажатую папку по id

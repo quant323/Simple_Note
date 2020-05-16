@@ -6,12 +6,6 @@
     <group android:checkableBehavior="single"
         android:id="@+id/folder_group">
 
-<!--        <item
-            android:id="@+id/nav_home_folder"
-            android:title="@string/nav_home_folder"
-            android:icon="@drawable/ic_home"
-            android:orderInCategory="1"/>-->
-
         <item
             android:id="@+id/nav_bin"
             android:title="@string/nav_bin"

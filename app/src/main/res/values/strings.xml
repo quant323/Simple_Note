@@ -2,14 +2,14 @@
     <string name="app_name">SimpleNote_2</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Simply NoteIt!</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
     <string name="default_folder_name">My Notes</string>
 
     <string name="home_second">Home Second</string>
     <string name="title_activity_note">NoteActivity</string>
     <string name="note_hint_text">Enter your note here...</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 
     <string name="action_delete_folder">Delete Folder</string>
     <string name="action_rename_folder">Rename Folder</string>
@@ -19,6 +19,9 @@
     <string name="action_context_delete">Delete</string>
     <string name="action_context_move">Move</string>
 
+    <string name="nav_header_title">Simply NoteIt!</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
     <string name="nav_home_folder">My Notes</string>
     <string name="nav_bin">Bin</string>
     <string name="nav_settings">Settings</string>
@@ -26,5 +29,9 @@
     <string name="nav_add_new_folder">Add New Folder</string>
 
     <string name="d_create_folder_hint">Enter Name</string>
+    <string name="d_delete_title">Deleting</string>
+    <string name="d_delete_message">Are you sure that you want to delete this note?</string>
+
+    <string name="mes_folder_is_not_empty">Folder is not Empty</string>
 
 </resources>

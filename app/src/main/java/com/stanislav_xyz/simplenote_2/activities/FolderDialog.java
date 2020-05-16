@@ -19,12 +19,25 @@ public class FolderDialog extends AppCompatDialogFragment {
 
     private Context context;
     private FolderDialogListener folderDialogListener;
+    private String message;
+    private String curFolderName;
 
-    // Конструктор
-    public FolderDialog(Context context, FolderDialogListener folderDialogListener) {
+    // Конструктор для создания новой папки
+    public FolderDialog(Context context, String message, FolderDialogListener folderDialogListener) {
         this.context = context;
         this.folderDialogListener = folderDialogListener;
+        this.message = message;
     }
+
+    // Конструктор для переименования папки
+    public FolderDialog(Context context, String message, String curFolderName,
+                        FolderDialogListener folderDialogListener) {
+        this.context = context;
+        this.folderDialogListener = folderDialogListener;
+        this.message = message;
+        this.curFolderName = curFolderName;
+    }
+
 
     @NonNull
     @Override
@@ -32,22 +45,25 @@ public class FolderDialog extends AppCompatDialogFragment {
         final EditText newFolderName_ET = new EditText(context);
         newFolderName_ET.setLayoutParams(new LinearLayout.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        newFolderName_ET.setHint(R.string.d_create_folder_hint);
+        if (curFolderName != null)
+            newFolderName_ET.setText(curFolderName);
+        else
+            newFolderName_ET.setHint(R.string.d_create_folder_hint);
 
         return new AlertDialog.Builder(context)
-                .setMessage(R.string.nav_add_new_folder)
+                .setMessage(message)
                 .setView(newFolderName_ET)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         folderDialogListener.onFolderConfirm(newFolderName_ET.getText().toString());
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create();
     }
 
-
+    // Интерфейс
     public interface FolderDialogListener {
         void onFolderConfirm(String name);
     }

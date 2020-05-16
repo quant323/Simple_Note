@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.model.Note;
+import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 
 import java.util.List;
 
@@ -65,8 +66,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    NoteActivity.startThisActivity((Activity) itemView.getContext(),
-                            mNotes.get(getAdapterPosition()), null);
+                    ActivityStarter.startNoteActivity((Activity) itemView.getContext(),
+                            mNotes.get(getAdapterPosition()));
                 }
             });
 
