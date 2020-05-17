@@ -1,4 +1,4 @@
-package com.stanislav_xyz.simplenote_2.activities;
+package com.stanislav_xyz.simplenote_2.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

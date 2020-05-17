@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
+import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 

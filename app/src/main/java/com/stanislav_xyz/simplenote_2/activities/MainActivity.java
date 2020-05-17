@@ -10,9 +10,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
+import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
+import com.stanislav_xyz.simplenote_2.dialogs.MoveNoteDialog;
+import com.stanislav_xyz.simplenote_2.dialogs.NewFolderDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
+import com.stanislav_xyz.simplenote_2.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                 }).show(getSupportFragmentManager(), null);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
-                new MoveNoteDialog(this, getFolderNames(mFolderList),
+                new MoveNoteDialog(this, Utils.getFolderNames(mFolderList),
                         new MoveNoteDialog.MoveDialogListener() {
                             @Override
                             public void onMoveConfirmed(int folderIndex) {
@@ -181,7 +185,7 @@ public class MainActivity extends AppCompatActivity
                 }).show(getSupportFragmentManager(), null);
                 break;
             default:
-                mCurFolder = getPressedFolder(id);
+                mCurFolder = Utils.getPressedFolder(id, mFolderList);
                 updateNoteList();
                 setTitle(mCurFolder.getName());
                 break;
@@ -285,24 +289,6 @@ public class MainActivity extends AppCompatActivity
         Note note = mNotesInCurFolder.get(notePosition);
         note.setFolder(folder.getName());
         mNoteViewModel.update(note);
-    }
-
-    // Возвращает нажатую папку по id
-    private Folder getPressedFolder(int id) {
-        for (int i = 0; i < mFolderList.size(); i++) {
-            if (mFolderList.get(i).getId() == id)
-                return mFolderList.get(i);
-        }
-        return mFolderList.get(0);
-    }
-
-    // Возвращает массив имен папок, за исключением текущей папки
-    private String[] getFolderNames(List<Folder> folderList) {
-        String[] names = new String[folderList.size()];
-        for (int i = 0; i < folderList.size(); i++) {
-                names[i] = folderList.get(i).getName();
-        }
-        return names;
     }
 
 }
