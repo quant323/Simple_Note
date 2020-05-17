@@ -15,12 +15,14 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 public class MoveNoteDialog extends AppCompatDialogFragment {
 
     private Context context;
-    String[] folderNames;
+    private String[] folderNames;
+    private MoveDialogListener dialogListener;
 
     // Конструктор
-    public MoveNoteDialog(Context context, String... folderNames) {
+    public MoveNoteDialog(Context context, String[] folderNames, MoveDialogListener dialogListener) {
         this.context = context;
         this.folderNames = folderNames;
+        this.dialogListener = dialogListener;
     }
 
     @NonNull
@@ -31,8 +33,15 @@ public class MoveNoteDialog extends AppCompatDialogFragment {
                 .setItems(folderNames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialogListener.onMoveConfirmed(which);
                     }
                 }).create();
     }
+
+
+    // Интерфейс
+    public interface MoveDialogListener {
+        void onMoveConfirmed(int index);
+    }
+
 }

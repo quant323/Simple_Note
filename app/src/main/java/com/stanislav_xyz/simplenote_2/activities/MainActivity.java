@@ -143,7 +143,13 @@ public class MainActivity extends AppCompatActivity
                 }).show(getSupportFragmentManager(), null);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
-                new MoveNoteDialog(this, "sss", "sre", "ttt").show(getSupportFragmentManager(), null);
+                new MoveNoteDialog(this, getFolderNames(mFolderList),
+                        new MoveNoteDialog.MoveDialogListener() {
+                            @Override
+                            public void onMoveConfirmed(int folderIndex) {
+                                moveNote(folderIndex, position);
+                            }
+                        }).show(getSupportFragmentManager(), null);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -273,6 +279,14 @@ public class MainActivity extends AppCompatActivity
         updateNoteList();
     }
 
+    // Перемещает заметку из одной папки в другую
+    private void moveNote(int folderIndex, int notePosition) {
+        Folder folder = mFolderList.get(folderIndex);
+        Note note = mNotesInCurFolder.get(notePosition);
+        note.setFolder(folder.getName());
+        mNoteViewModel.update(note);
+    }
+
     // Возвращает нажатую папку по id
     private Folder getPressedFolder(int id) {
         for (int i = 0; i < mFolderList.size(); i++) {
@@ -280,6 +294,15 @@ public class MainActivity extends AppCompatActivity
                 return mFolderList.get(i);
         }
         return mFolderList.get(0);
+    }
+
+    // Возвращает массив имен папок, за исключением текущей папки
+    private String[] getFolderNames(List<Folder> folderList) {
+        String[] names = new String[folderList.size()];
+        for (int i = 0; i < folderList.size(); i++) {
+                names[i] = folderList.get(i).getName();
+        }
+        return names;
     }
 
 }
