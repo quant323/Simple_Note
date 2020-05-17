@@ -8,13 +8,11 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
-import com.stanislav_xyz.simplenote_2.utils.WorkWithSharedPref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,6 @@ public class MainActivity extends AppCompatActivity
     private NoteViewModel mNoteViewModel;
     private NoteListAdapter mAdapter;
     private DrawerLayout mDrawer;
-    private WorkWithSharedPref mSharedPref;
     private Menu mNavigationMenu;
 
     private List<Note> mNotes;
@@ -58,6 +55,9 @@ public class MainActivity extends AppCompatActivity
 
         mNotesInCurFolder = new ArrayList<>();
 
+        // Инициализация ViewModel
+        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+
         // Инициализируем RecyclerView
         initializeRecyclerView();
 
@@ -66,9 +66,6 @@ public class MainActivity extends AppCompatActivity
 
         // Инициализируем Drawer меню
         initializeDrawer(toolbar);
-
-        // Инициализация ViewModel
-        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
 
         mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
             @Override
@@ -117,8 +114,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.action_rename_folder:
                 String message = getString(R.string.action_rename_folder);
-                new FolderDialog(this, message, mCurFolder.getName(),
-                        new FolderDialog.FolderDialogListener() {
+                new NewFolderDialog(this, message, mCurFolder.getName(),
+                        new NewFolderDialog.FolderDialogListener() {
                             @Override
                             public void onFolderConfirm(String name) {
                                 renameFolder(name, mCurFolder);
@@ -170,7 +167,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_add_new_folder:
                 String message = getString(R.string.nav_add_new_folder);
-                new FolderDialog(this, message, new FolderDialog.FolderDialogListener() {
+                new NewFolderDialog(this, message, new NewFolderDialog.FolderDialogListener() {
                     @Override
                     public void onFolderConfirm(String name) {
                         createNewFolder(name);
@@ -198,14 +195,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeFolderList() {
-        mSharedPref = new WorkWithSharedPref(this);
-        mFolderList = mSharedPref.loadFromSharedPref();
+        mFolderList = mNoteViewModel.getAllFolders();
         if (mFolderList == null) {
             Folder folder = new Folder(getString(R.string.default_folder_name),
                     System.currentTimeMillis(), INITIAL_FOLDER_ID);
-            mFolderList = new ArrayList<>();
-            mFolderList.add(folder);
-            mSharedPref.saveInSharedPref(mFolderList);
+            mNoteViewModel.insertFolder(folder);
+            mFolderList = mNoteViewModel.getAllFolders();
         }
         // Устанавливаем папку по-умолчанию - первую папку
         mCurFolder = mFolderList.get(0);
@@ -248,8 +243,8 @@ public class MainActivity extends AppCompatActivity
         Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
         // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
         mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
-        mFolderList.add(mCurFolder);
-        mSharedPref.saveInSharedPref(mFolderList);
+        mNoteViewModel.insertFolder(mCurFolder);
+        mFolderList = mNoteViewModel.getAllFolders();
         addMenuItem(mNavigationMenu, mCurFolder).setChecked(true);
         setTitle(mCurFolder.getName());
         updateNoteList();
@@ -257,20 +252,21 @@ public class MainActivity extends AppCompatActivity
 
     private void renameFolder(String name, Folder folder) {
         folder.setName(name);
-        mSharedPref.saveInSharedPref(mFolderList);
+        mNoteViewModel.updateFolder(folder);
+        mFolderList = mNoteViewModel.getAllFolders();
         setTitle(folder.getName());
         // Обновляем Notes в БД
         for (Note note : mNotesInCurFolder) {
             note.setFolder(folder.getName());
             mNoteViewModel.update(note);
         }
-        mNavigationMenu.getItem(folder.getId()).setTitle(folder.getName());
+        mNavigationMenu.findItem(folder.getId()).setTitle(folder.getName());
     }
 
     private void deleteFolder(Folder folder) {
+        mNoteViewModel.deleteFolder(folder);
+        mFolderList = mNoteViewModel.getAllFolders();
         mNavigationMenu.removeItem(folder.getId());
-        mFolderList.remove(folder);
-        mSharedPref.saveInSharedPref(mFolderList);
         mCurFolder = mFolderList.get(0);
         mNavigationMenu.findItem(mCurFolder.getId()).setChecked(true);
         setTitle(mCurFolder.getName());

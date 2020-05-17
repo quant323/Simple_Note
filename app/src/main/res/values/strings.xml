@@ -17,7 +17,7 @@
     <string name="action_note_delete">Delete Note</string>
     <string name="action_context_open">Open</string>
     <string name="action_context_delete">Delete</string>
-    <string name="action_context_move">Move</string>
+    <string name="action_context_move">Move to</string>
 
     <string name="nav_header_title">Simply NoteIt!</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>

@@ -1,7 +1,9 @@
 package com.stanislav_xyz.simplenote_2.data;
 
 import android.app.Application;
+import android.util.Log;
 
+import com.stanislav_xyz.simplenote_2.activities.MainActivity;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.WorkWithSharedPref;
@@ -14,6 +16,7 @@ public class NoteRepository {
     private NoteDao mNoteDao;
     private LiveData<List<Note>> mAllNotes;
     private WorkWithSharedPref mSharedPref;
+    private List<Folder> mAllFolders;
 
 
     // Конструктор
@@ -22,6 +25,7 @@ public class NoteRepository {
         mNoteDao = db.noteDao();
         mAllNotes = mNoteDao.getAllNotes();
         mSharedPref = new WorkWithSharedPref(application.getApplicationContext());
+        mAllFolders = mSharedPref.loadFromSharedPref();
     }
 
     // Работа с заметками
@@ -75,26 +79,24 @@ public class NoteRepository {
     }
 
 
-
     // Работа с SharedPreferences
     private List<Folder> getFoldersFromSharedPref() {
-        return mSharedPref.loadFromSharedPref();
+        return mAllFolders;
     }
 
     private void insertFolderToSharedPref(Folder folder) {
-        getFoldersFromSharedPref().add(folder);
+        mAllFolders.add(folder);
+        mSharedPref.saveInSharedPref(mAllFolders);
     }
 
     private void deleteFolderFromSharedPref(Folder folder) {
-        List<Folder> folderList = getFoldersFromSharedPref();
-        folderList.remove(folder);
-        mSharedPref.saveInSharedPref(folderList);
+        mAllFolders.remove(folder);
+        mSharedPref.saveInSharedPref(mAllFolders);
     }
 
     private void updateFolderInSharedPref(Folder folder) {
-        List<Folder> folderList = getFoldersFromSharedPref();
-        int index = folderList.indexOf(folder);
-        folderList.set(index, folder);
+        mAllFolders.set(mAllFolders.indexOf(folder), folder);
+        mSharedPref.saveInSharedPref(mAllFolders);
     }
 
 }

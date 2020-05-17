@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import com.stanislav_xyz.simplenote_2.R;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -25,7 +27,7 @@ public class MoveNoteDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         return new AlertDialog.Builder(context)
-                .setTitle("Moving")
+                .setTitle(R.string.action_context_move)
                 .setItems(folderNames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

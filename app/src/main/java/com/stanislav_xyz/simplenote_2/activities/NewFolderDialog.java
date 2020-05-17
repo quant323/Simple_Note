@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-public class FolderDialog extends AppCompatDialogFragment {
+public class NewFolderDialog extends AppCompatDialogFragment {
 
     private Context context;
     private FolderDialogListener folderDialogListener;
@@ -23,15 +23,15 @@ public class FolderDialog extends AppCompatDialogFragment {
     private String curFolderName;
 
     // Конструктор для создания новой папки
-    public FolderDialog(Context context, String message, FolderDialogListener folderDialogListener) {
+    public NewFolderDialog(Context context, String message, FolderDialogListener folderDialogListener) {
         this.context = context;
         this.folderDialogListener = folderDialogListener;
         this.message = message;
     }
 
     // Конструктор для переименования папки
-    public FolderDialog(Context context, String message, String curFolderName,
-                        FolderDialogListener folderDialogListener) {
+    public NewFolderDialog(Context context, String message, String curFolderName,
+                           FolderDialogListener folderDialogListener) {
         this.context = context;
         this.folderDialogListener = folderDialogListener;
         this.message = message;
