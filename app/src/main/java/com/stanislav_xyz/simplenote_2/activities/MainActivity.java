@@ -111,10 +111,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_delete_folder:
                 if (mNotesInCurFolder.size() < 1) {
                     deleteFolder(mCurFolder);
-                    mCurFolder = mFolderList.get(0);
-                    setTitle(mCurFolder.getName());
-                    mNavigationMenu.findItem(mCurFolder.getId()).setChecked(true);
-                    updateNoteList();
                 } else {
                     Toast.makeText(this, R.string.mes_folder_is_not_empty, Toast.LENGTH_SHORT).show();
                 }
@@ -150,8 +146,7 @@ public class MainActivity extends AppCompatActivity
                 }).show(getSupportFragmentManager(), null);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
-                Snackbar.make(findViewById(R.id.coordinator_main), "Moving..." + item.getGroupId(),
-                        Snackbar.LENGTH_SHORT).show();
+                new MoveNoteDialog(this, "sss", "sre", "ttt").show(getSupportFragmentManager(), null);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -210,6 +205,7 @@ public class MainActivity extends AppCompatActivity
                     System.currentTimeMillis(), INITIAL_FOLDER_ID);
             mFolderList = new ArrayList<>();
             mFolderList.add(folder);
+            mSharedPref.saveInSharedPref(mFolderList);
         }
         // Устанавливаем папку по-умолчанию - первую папку
         mCurFolder = mFolderList.get(0);
@@ -254,9 +250,9 @@ public class MainActivity extends AppCompatActivity
         mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
         mFolderList.add(mCurFolder);
         mSharedPref.saveInSharedPref(mFolderList);
-        updateNoteList();
         addMenuItem(mNavigationMenu, mCurFolder).setChecked(true);
         setTitle(mCurFolder.getName());
+        updateNoteList();
     }
 
     private void renameFolder(String name, Folder folder) {
@@ -275,6 +271,10 @@ public class MainActivity extends AppCompatActivity
         mNavigationMenu.removeItem(folder.getId());
         mFolderList.remove(folder);
         mSharedPref.saveInSharedPref(mFolderList);
+        mCurFolder = mFolderList.get(0);
+        mNavigationMenu.findItem(mCurFolder.getId()).setChecked(true);
+        setTitle(mCurFolder.getName());
+        updateNoteList();
     }
 
     // Возвращает нажатую папку по id
