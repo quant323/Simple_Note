@@ -1,7 +1,9 @@
 package com.stanislav_xyz.simplenote_2.utils;
 
 import com.stanislav_xyz.simplenote_2.model.Folder;
+import com.stanislav_xyz.simplenote_2.model.Note;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
@@ -22,6 +24,17 @@ public class Utils {
             names[i] = folderList.get(i).getName();
         }
         return names;
+    }
+
+    // Возвращает лист заметок, относящихся к папке
+    public static List<Note> getNotesFromFolder(List<Note> notes, Folder folder) {
+        List<Note> notesInFolder = new ArrayList<>();
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getFolder().equals(folder.getName())) {
+                notesInFolder.add(notes.get(i));
+            }
+        }
+        return notesInFolder;
     }
 
 }
