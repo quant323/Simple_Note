@@ -29,9 +29,10 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = "myTag";
 
-    private NoteListAdapter mAdapter;
+    private NoteListAdapter mAdapter = new NoteListAdapter();
     private DrawerLayout mDrawer;
     private Menu mNavigationMenu;
+    private FloatingActionButton fab;
     private Controller mController;
 
     @Override
@@ -41,10 +42,8 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mController = new Controller(this, this);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        mAdapter = new NoteListAdapter();
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -62,13 +61,9 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationMenu = navigationView.getMenu();
 
-        // Инициализируем список папок
-        mController.initFolderList();
+        mController = new Controller(this, this);
 
-        // Устанавливаем пункты меню
-        mController.initDrawerMenu();
-
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,7 +74,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -181,6 +175,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showToast(int id) {
         Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void fabStateControl(boolean visibility) {
+        if (visibility) fab.show();
+        else fab.hide();
     }
 
 }

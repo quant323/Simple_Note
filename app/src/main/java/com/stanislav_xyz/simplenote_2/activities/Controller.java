@@ -28,16 +28,19 @@ public class Controller {
     private NoteViewModel mNoteViewModel;
 
     private List<Note> mNotes;
-    private List<Note> mNotesInCurFolder;
+    private List<Note> mNotesInCurFolder = new ArrayList<>();
     private List<Folder> mFolderList;
     private Folder mCurFolder;
+    private Folder mBinFolder;
 
     // Конструктор
     public Controller(FragmentActivity activity, MainInterface mainInterface) {
         mActivity = activity;
         mMainInterface = mainInterface;
-        mNotesInCurFolder = new ArrayList<>();
         mNoteViewModel = ViewModelProviders.of(activity).get(NoteViewModel.class);
+        initFolderList();
+        initDrawerMenu();
+        mBinFolder = new Folder(mActivity.getString(R.string.nav_bin), 0, R.id.nav_bin);
         mNoteViewModel.getAllNotes().observe(activity, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
@@ -48,7 +51,6 @@ public class Controller {
         });
     }
 
-
     public void initFolderList() {
         mFolderList = mNoteViewModel.getAllFolders();
         if (mFolderList == null) {
@@ -57,9 +59,7 @@ public class Controller {
             mNoteViewModel.insertFolder(folder);
             mFolderList = mNoteViewModel.getAllFolders();
         }
-        // Устанавливаем папку по-умолчанию - первую папку
         mCurFolder = mFolderList.get(0);
-        // Устанавливаем имя папки в Toolbar
         mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
@@ -73,7 +73,6 @@ public class Controller {
             }
         }
     }
-
 
     public void onFabPressed() {
         ActivityStarter.startNoteActivity(mActivity, mCurFolder.getName());
@@ -107,6 +106,7 @@ public class Controller {
             @Override
             public void onDeleteConfirm() {
                 mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
+                mMainInterface.showToast(R.string.mes_notes_has_been_deleted);
             }
         }).show(mActivity.getSupportFragmentManager(), null);
     }
@@ -122,8 +122,13 @@ public class Controller {
     }
 
     public void onNavBinPressed() {
+        mCurFolder = mBinFolder;
+        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
+        mMainInterface.updateNoteResView(mNotesInCurFolder);
+        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        mMainInterface.fabStateControl(false);
+
         mMainInterface.showToast("Bin folder is pressed!");
-        mMainInterface.setToolbarTitle(mActivity.getString(R.string.nav_bin));
     }
 
     public void onNavSettingsPressed() {
@@ -150,6 +155,7 @@ public class Controller {
         mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
         mMainInterface.setToolbarTitle(mCurFolder.getName());
+        mMainInterface.fabStateControl(true);
     }
 
     private void createNewFolder(String name) {

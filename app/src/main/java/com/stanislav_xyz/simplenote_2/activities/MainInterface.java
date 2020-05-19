@@ -22,4 +22,6 @@ public interface MainInterface {
     void showToast(String text);
 
     void showToast(int id);
+
+    void fabStateControl(boolean visibility);
 }
