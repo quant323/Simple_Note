@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.stanislav_xyz.simplenote_2.R;
 
 import com.stanislav_xyz.simplenote_2.model.Folder;
@@ -181,6 +182,16 @@ public class MainActivity extends AppCompatActivity
     public void fabStateControl(boolean visibility) {
         if (visibility) fab.show();
         else fab.hide();
+    }
+
+    @Override
+    public void showSnack(String text) {
+        Snackbar.make(findViewById(R.id.coordinator_main), text, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showSnack(int id) {
+        Snackbar.make(findViewById(R.id.coordinator_main), id, Snackbar.LENGTH_LONG).show();
     }
 
 }

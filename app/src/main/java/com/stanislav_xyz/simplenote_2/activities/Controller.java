@@ -102,13 +102,20 @@ public class Controller {
     }
 
     public void onContextDelPressed(final int position) {
-        new DeleteDialog(mActivity, new DeleteDialog.DeleteDialogListener() {
-            @Override
-            public void onDeleteConfirm() {
-                mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
-                mMainInterface.showToast(R.string.mes_notes_has_been_deleted);
-            }
-        }).show(mActivity.getSupportFragmentManager(), null);
+        if (mCurFolder != mBinFolder) {
+            Note note = mNotesInCurFolder.get(position);
+            note.setFolder(mBinFolder.getName());
+            mNoteViewModel.update(note);
+            mMainInterface.showSnack(R.string.mes_note_has_been_moved_to_bin);
+        } else {
+            new DeleteDialog(mActivity, new DeleteDialog.DeleteDialogListener() {
+                @Override
+                public void onDeleteConfirm() {
+                    mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
+                    mMainInterface.showSnack(R.string.mes_note_has_been_deleted);
+                }
+            }).show(mActivity.getSupportFragmentManager(), null);
+        }
     }
 
     public void onContextMovePressed(final int position) {
@@ -126,9 +133,6 @@ public class Controller {
         mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
         mMainInterface.setToolbarTitle(mCurFolder.getName());
-        mMainInterface.fabStateControl(false);
-
-        mMainInterface.showToast("Bin folder is pressed!");
     }
 
     public void onNavSettingsPressed() {

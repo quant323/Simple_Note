@@ -24,4 +24,8 @@ public interface MainInterface {
     void showToast(int id);
 
     void fabStateControl(boolean visibility);
+
+    void showSnack(String text);
+
+    void showSnack(int id);
 }
