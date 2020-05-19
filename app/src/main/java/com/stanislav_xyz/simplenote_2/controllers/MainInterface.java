@@ -1,4 +1,4 @@
-package com.stanislav_xyz.simplenote_2.activities;
+package com.stanislav_xyz.simplenote_2.controllers;
 
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;

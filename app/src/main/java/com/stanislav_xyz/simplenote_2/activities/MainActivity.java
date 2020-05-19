@@ -11,6 +11,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.stanislav_xyz.simplenote_2.R;
 
+import com.stanislav_xyz.simplenote_2.controllers.MainController;
+import com.stanislav_xyz.simplenote_2.controllers.MainInterface;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import java.util.List;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawer;
     private Menu mNavigationMenu;
     private FloatingActionButton fab;
-    private Controller mController;
+    private MainController mMainController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +64,13 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationMenu = navigationView.getMenu();
 
-        mController = new Controller(this, this);
+        mMainController = new MainController(this, this);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mController.onFabPressed();
+                mMainController.onFabPressed();
             }
         });
     }
@@ -83,10 +85,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete_folder:
-                mController.onMenuDelPressed();
+                mMainController.onMenuDelPressed();
                 return true;
             case R.id.action_rename_folder:
-                mController.onMenuRenamePressed();
+                mMainController.onMenuRenamePressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -98,13 +100,13 @@ public class MainActivity extends AppCompatActivity
         final int position = item.getGroupId();
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                mController.onContextOpenPressed();
+                mMainController.onContextOpenPressed();
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
-                mController.onContextDelPressed(position);
+                mMainController.onContextDelPressed(position);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
-                mController.onContextMovePressed(position);
+                mMainController.onContextMovePressed(position);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -116,19 +118,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_bin:
-                mController.onNavBinPressed();
+                mMainController.onNavBinPressed();
                 break;
             case R.id.nav_settings:
-                mController.onNavSettingsPressed();
+                mMainController.onNavSettingsPressed();
                 break;
             case R.id.nav_about:
-                mController.onNavAboutPressed();
+                mMainController.onNavAboutPressed();
                 break;
             case R.id.nav_add_new_folder:
-                mController.onNavAddFolderPressed();
+                mMainController.onNavAddFolderPressed();
                 break;
             default:
-                mController.onNavNormalFolderPressed(id);
+                mMainController.onNavNormalFolderPressed(id);
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);

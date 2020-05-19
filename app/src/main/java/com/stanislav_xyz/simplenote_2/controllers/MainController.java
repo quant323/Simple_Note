@@ -1,4 +1,4 @@
-package com.stanislav_xyz.simplenote_2.activities;
+package com.stanislav_xyz.simplenote_2.controllers;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
@@ -17,7 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-public class Controller {
+public class MainController {
 
     private static final String TAG = "myTag";
     private static final int INITIAL_FOLDER_ID = 0;
@@ -34,7 +34,7 @@ public class Controller {
     private Folder mBinFolder;
 
     // Конструктор
-    public Controller(FragmentActivity activity, MainInterface mainInterface) {
+    public MainController(FragmentActivity activity, MainInterface mainInterface) {
         mActivity = activity;
         mMainInterface = mainInterface;
         mNoteViewModel = ViewModelProviders.of(activity).get(NoteViewModel.class);
@@ -51,7 +51,7 @@ public class Controller {
         });
     }
 
-    public void initFolderList() {
+    private void initFolderList() {
         mFolderList = mNoteViewModel.getAllFolders();
         if (mFolderList == null) {
             Folder folder = new Folder(mActivity.getString(R.string.default_folder_name),
@@ -63,7 +63,7 @@ public class Controller {
         mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
-    public void initDrawerMenu() {
+    private void initDrawerMenu() {
         for (int i = 0; i < mFolderList.size(); i++) {
             if (i != 0) {
                 mMainInterface.addDrawerMenuItem(mFolderList.get(i), R.drawable.ic_folder);
