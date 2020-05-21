@@ -21,6 +21,7 @@
         <item
             android:id="@+id/nav_about"
             android:title="@string/nav_about"
+            android:checkable="false"
             android:icon="@drawable/ic_info"
             android:orderInCategory="1020"/>
 

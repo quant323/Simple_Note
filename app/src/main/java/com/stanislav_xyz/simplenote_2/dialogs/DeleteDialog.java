@@ -14,21 +14,40 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class DeleteDialog extends AppCompatDialogFragment {
 
+    public static final int ACTION_DELETE_NOTE = 0;
+    public static final int ACTION_EMPTY_BIN = 1;
+
     private Context context;
     private DeleteDialogListener dialogListener;
+    private int titleId;
+    private int messageId;
 
     // Конструктор
-    public DeleteDialog(Context context, DeleteDialogListener dialogListener) {
+    public DeleteDialog(Context context, int action, DeleteDialogListener dialogListener) {
         this.context = context;
         this.dialogListener = dialogListener;
+        setAction(action);
+    }
+
+    private void setAction(int action) {
+        switch (action) {
+            case ACTION_DELETE_NOTE:
+                titleId = R.string.d_delete_title;
+                messageId = R.string.d_delete_message;
+                break;
+            case ACTION_EMPTY_BIN:
+                titleId = R.string.d_empty_title;
+                messageId = R.string.d_empty_message;
+                break;
+        }
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         return new AlertDialog.Builder(context)
-                .setTitle(R.string.d_delete_title)
-                .setMessage(R.string.d_delete_message)
+                .setTitle(titleId)
+                .setMessage(messageId)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

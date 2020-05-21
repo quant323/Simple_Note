@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private Menu mNavigationMenu;
     private FloatingActionButton fab;
     private MainController mMainController;
+    private Menu mMainMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        mMainMenu = menu;
         return true;
     }
 
@@ -90,6 +92,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_rename_folder:
                 mMainController.onMenuRenamePressed();
                 return true;
+            case R.id.action_clean_bin:
+                mMainController.onMenuCleanBinPressed();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_bin:
                 mMainController.onNavBinPressed();
+                setItemsVisibility(false);
                 break;
             case R.id.nav_settings:
                 mMainController.onNavSettingsPressed();
@@ -131,10 +136,20 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 mMainController.onNavNormalFolderPressed(id);
+                setItemsVisibility(true);
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    // Управляет отображением пунктов главного меню
+    private void setItemsVisibility(boolean visibility) {
+        mMainMenu.findItem(R.id.action_delete_folder).setVisible(visibility);
+        mMainMenu.findItem(R.id.action_rename_folder).setVisible(visibility);
+        mMainMenu.findItem(R.id.action_clean_bin).setVisible(!visibility);
+        if (visibility) fab.show();
+        else fab.hide();
     }
 
     // Методы интерфейса
@@ -181,12 +196,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void fabStateControl(boolean visibility) {
-        if (visibility) fab.show();
-        else fab.hide();
-    }
-
-    @Override
     public void showSnack(String text) {
         Snackbar.make(findViewById(R.id.coordinator_main), text, Snackbar.LENGTH_LONG).show();
     }
@@ -194,6 +203,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showSnack(int id) {
         Snackbar.make(findViewById(R.id.coordinator_main), id, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void enableDelMenu(boolean enable) {
+        mMainMenu.findItem(R.id.action_delete_folder).setEnabled(enable);
     }
 
 }

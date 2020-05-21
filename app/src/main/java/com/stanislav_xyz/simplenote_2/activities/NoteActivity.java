@@ -98,7 +98,8 @@ public class NoteActivity extends AppCompatActivity {
                 break;
             case R.id.action_note_delete:
                 if (mNote != null) {
-                    new DeleteDialog(this, new DeleteDialog.DeleteDialogListener() {
+                    new DeleteDialog(this, DeleteDialog.ACTION_DELETE_NOTE,
+                            new DeleteDialog.DeleteDialogListener() {
                         @Override
                         public void onDeleteConfirm() {
                             mNoteViewModel.deleteNote(mNote);

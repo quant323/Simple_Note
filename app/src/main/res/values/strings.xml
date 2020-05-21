@@ -19,6 +19,7 @@
     <string name="action_context_open">Open</string>
     <string name="action_context_delete">Delete</string>
     <string name="action_context_move">Move to</string>
+    <string name="action_clean_bin">Clean the Bin</string>
 
     <string name="nav_header_title">Simply NoteIt!</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
@@ -31,10 +32,14 @@
 
     <string name="d_create_folder_hint">Enter Name</string>
     <string name="d_delete_title">Deleting</string>
-    <string name="d_delete_message">Are you sure that you want to delete this note?</string>
+    <string name="d_delete_message">Delete Note?</string>
+    <string name="d_empty_title">Empty Bin</string>
+    <string name="d_empty_message">Delete all notes from Bin?</string>
+    <string name="d_about_title">Simple Note v0.1</string>
 
     <string name="mes_folder_is_not_empty">Folder is not Empty</string>
-    <string name="mes_note_has_been_moved_to_bin">Note has been moved to Bin!</string>
-    <string name="mes_note_has_been_deleted">Note has been deleted!</string>
+    <string name="mes_note_moved_to_bin">Note moved to Bin!</string>
+    <string name="mes_note_deleted">Note deleted!</string>
+    <string name="mes_bin_is_empty">Bin is Empty!</string>
 
 </resources>

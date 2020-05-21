@@ -2,6 +2,7 @@ package com.stanislav_xyz.simplenote_2.controllers;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
+import com.stanislav_xyz.simplenote_2.dialogs.AboutDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.MoveNoteDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.NewFolderDialog;
@@ -20,7 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 public class MainController {
 
     private static final String TAG = "myTag";
-    private static final int INITIAL_FOLDER_ID = 0;
+    public static final int INITIAL_FOLDER_ID = 0;
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
@@ -47,6 +48,7 @@ public class MainController {
                 mNotes = notes;
                 mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
                 mMainInterface.updateNoteResView(mNotesInCurFolder);
+                mMainInterface.setToolbarTitle(mCurFolder.getName());
             }
         });
     }
@@ -60,7 +62,7 @@ public class MainController {
             mFolderList = mNoteViewModel.getAllFolders();
         }
         mCurFolder = mFolderList.get(0);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+ //       mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
     private void initDrawerMenu() {
@@ -97,24 +99,41 @@ public class MainController {
                 }).show(mActivity.getSupportFragmentManager(), null);
     }
 
+    public void onMenuCleanBinPressed() {
+        if (mNotesInCurFolder.size() > 0) {
+            new DeleteDialog(mActivity, DeleteDialog.ACTION_EMPTY_BIN, new DeleteDialog.DeleteDialogListener() {
+                @Override
+                public void onDeleteConfirm() {
+                    if (mCurFolder == mBinFolder)
+                        for (Note note : mNotesInCurFolder)
+                            mNoteViewModel.deleteNote(note);
+                    mMainInterface.showSnack(R.string.mes_bin_is_empty);
+                }
+            }).show(mActivity.getSupportFragmentManager(), null);
+        } else {
+            mMainInterface.showSnack(R.string.mes_bin_is_empty);
+        }
+    }
+
     public void onContextOpenPressed() {
         ActivityStarter.startNoteActivity(mActivity, mCurFolder.getName());
     }
 
     public void onContextDelPressed(final int position) {
         if (mCurFolder != mBinFolder) {
-            Note note = mNotesInCurFolder.get(position);
-            note.setFolder(mBinFolder.getName());
-            mNoteViewModel.update(note);
-            mMainInterface.showSnack(R.string.mes_note_has_been_moved_to_bin);
+            new DeleteDialog(mActivity, DeleteDialog.ACTION_DELETE_NOTE,
+                    new DeleteDialog.DeleteDialogListener() {
+                        @Override
+                        public void onDeleteConfirm() {
+                            Note note = mNotesInCurFolder.get(position);
+                            note.setFolder(mBinFolder.getName());
+                            mNoteViewModel.update(note);
+                            mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
+                        }
+                    }).show(mActivity.getSupportFragmentManager(), null);
         } else {
-            new DeleteDialog(mActivity, new DeleteDialog.DeleteDialogListener() {
-                @Override
-                public void onDeleteConfirm() {
-                    mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
-                    mMainInterface.showSnack(R.string.mes_note_has_been_deleted);
-                }
-            }).show(mActivity.getSupportFragmentManager(), null);
+            mNoteViewModel.deleteNote(mNotesInCurFolder.get(position));
+            mMainInterface.showSnack(R.string.mes_note_deleted);
         }
     }
 
@@ -141,7 +160,7 @@ public class MainController {
     }
 
     public void onNavAboutPressed() {
-        mMainInterface.showToast("About folder is pressed!");
+        new AboutDialog(mActivity).show(mActivity.getSupportFragmentManager(), null);
     }
 
     public void onNavAddFolderPressed() {
@@ -159,7 +178,7 @@ public class MainController {
         mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
         mMainInterface.setToolbarTitle(mCurFolder.getName());
-        mMainInterface.fabStateControl(true);
+        mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
     private void createNewFolder(String name) {
@@ -169,12 +188,13 @@ public class MainController {
         mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
         mNoteViewModel.insertFolder(mCurFolder);
         mFolderList = mNoteViewModel.getAllFolders();
-        // Очищаем список заметок в созданной папке
-        mNotesInCurFolder.clear();
+ //       mNotesInCurFolder.clear();
+        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
+        mMainInterface.setToolbarTitle(mCurFolder.getName());
         mMainInterface.addDrawerMenuItem(mCurFolder, R.drawable.ic_folder);
         mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
     private void deleteFolder(Folder folder) {
@@ -183,9 +203,10 @@ public class MainController {
         mMainInterface.deleteDrawerMenuItem(folder);
         mCurFolder = mFolderList.get(0);
         mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
         mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
+        mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
     private void renameFolder(String name, Folder folder) {
