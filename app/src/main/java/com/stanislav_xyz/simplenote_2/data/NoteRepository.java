@@ -14,9 +14,9 @@ import androidx.lifecycle.LiveData;
 public class NoteRepository {
 
     private NoteDao mNoteDao;
-    private LiveData<List<Note>> mAllNotes;
+    private static LiveData<List<Note>> mAllNotes;
     private WorkWithSharedPref mSharedPref;
-    private List<Folder> mAllFolders;
+    private static List<Folder> mAllFolders;
 
 
     // Конструктор
@@ -66,16 +66,16 @@ public class NoteRepository {
         return getFoldersFromSharedPref();
     }
 
-    public void insertFolder(Folder folder) {
-        insertFolderToSharedPref(folder);
+    public List<Folder> insertFolder(Folder folder) {
+        return insertFolderToSharedPref(folder);
     }
 
-    public void deleteFolder(Folder folder) {
-        deleteFolderFromSharedPref(folder);
+    public List<Folder> deleteFolder(Folder folder) {
+        return deleteFolderFromSharedPref(folder);
     }
 
-    public void updateFolder(Folder folder) {
-        updateFolderInSharedPref(folder);
+    public List<Folder> updateFolder(Folder folder) {
+        return updateFolderInSharedPref(folder);
     }
 
 
@@ -84,19 +84,22 @@ public class NoteRepository {
         return mAllFolders;
     }
 
-    private void insertFolderToSharedPref(Folder folder) {
+    private List<Folder> insertFolderToSharedPref(Folder folder) {
         mAllFolders.add(folder);
         mSharedPref.saveInSharedPref(mAllFolders);
+        return mAllFolders;
     }
 
-    private void deleteFolderFromSharedPref(Folder folder) {
+    private List<Folder> deleteFolderFromSharedPref(Folder folder) {
         mAllFolders.remove(folder);
         mSharedPref.saveInSharedPref(mAllFolders);
+        return mAllFolders;
     }
 
-    private void updateFolderInSharedPref(Folder folder) {
+    private List<Folder> updateFolderInSharedPref(Folder folder) {
         mAllFolders.set(mAllFolders.indexOf(folder), folder);
         mSharedPref.saveInSharedPref(mAllFolders);
+        return mAllFolders;
     }
 
 }

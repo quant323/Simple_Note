@@ -57,12 +57,10 @@ public class MainActivity extends AppCompatActivity
         mDrawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         mNavigationMenu = navigationView.getMenu();
 
         mMainController = new MainController(this, this);

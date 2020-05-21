@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 public class MainController {
 
     private static final String TAG = "myTag";
-    public static final int INITIAL_FOLDER_ID = 0;
+    private static final int INITIAL_FOLDER_ID = 0;
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
@@ -46,9 +46,7 @@ public class MainController {
             @Override
             public void onChanged(List<Note> notes) {
                 mNotes = notes;
-                mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
-                mMainInterface.updateNoteResView(mNotesInCurFolder);
-                mMainInterface.setToolbarTitle(mCurFolder.getName());
+                updateNoteList();
             }
         });
     }
@@ -62,7 +60,6 @@ public class MainController {
             mFolderList = mNoteViewModel.getAllFolders();
         }
         mCurFolder = mFolderList.get(0);
- //       mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
     private void initDrawerMenu() {
@@ -149,9 +146,7 @@ public class MainController {
 
     public void onNavBinPressed() {
         mCurFolder = mBinFolder;
-        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
-        mMainInterface.updateNoteResView(mNotesInCurFolder);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        updateNoteList();
     }
 
     public void onNavSettingsPressed() {
@@ -175,9 +170,7 @@ public class MainController {
 
     public void onNavNormalFolderPressed(int id) {
         mCurFolder = Utils.getPressedFolder(id, mFolderList);
-        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
-        mMainInterface.updateNoteResView(mNotesInCurFolder);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        updateNoteList();
         mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
@@ -186,33 +179,25 @@ public class MainController {
         Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
         // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
         mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
-        mNoteViewModel.insertFolder(mCurFolder);
-        mFolderList = mNoteViewModel.getAllFolders();
- //       mNotesInCurFolder.clear();
-        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
-        mMainInterface.updateNoteResView(mNotesInCurFolder);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        mFolderList = mNoteViewModel.insertFolder(mCurFolder);
         mMainInterface.addDrawerMenuItem(mCurFolder, R.drawable.ic_folder);
         mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
         mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
+        updateNoteList();
     }
 
     private void deleteFolder(Folder folder) {
-        mNoteViewModel.deleteFolder(folder);
-        mFolderList = mNoteViewModel.getAllFolders();
+        mFolderList = mNoteViewModel.deleteFolder(folder);
         mMainInterface.deleteDrawerMenuItem(folder);
         mCurFolder = mFolderList.get(0);
         mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
         mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
-        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
-        mMainInterface.updateNoteResView(mNotesInCurFolder);
-        mMainInterface.setToolbarTitle(mCurFolder.getName());
+        updateNoteList();
     }
 
     private void renameFolder(String name, Folder folder) {
         folder.setName(name);
-        mNoteViewModel.updateFolder(folder);
-        mFolderList = mNoteViewModel.getAllFolders();
+        mFolderList = mNoteViewModel.updateFolder(folder);
         // Обновляем Notes в БД
         for (Note note : mNotesInCurFolder) {
             note.setFolder(folder.getName());
@@ -222,12 +207,17 @@ public class MainController {
         mMainInterface.setToolbarTitle(folder.getName());
     }
 
-    // Перемещает заметку из одной папки в другую
     private void moveNote(int folderIndex, int notePosition) {
         Folder folder = mFolderList.get(folderIndex);
         Note note = mNotesInCurFolder.get(notePosition);
         note.setFolder(folder.getName());
         mNoteViewModel.update(note);
+    }
+
+    private void updateNoteList() {
+        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
+        mMainInterface.updateNoteResView(mNotesInCurFolder);
+        mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
 }

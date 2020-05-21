@@ -46,16 +46,16 @@ public class NoteViewModel extends AndroidViewModel {
         return mRepository.getAllFolders();
     }
 
-    public void insertFolder(Folder folder) {
-        mRepository.insertFolder(folder);
+    public List<Folder> insertFolder(Folder folder) {
+        return mRepository.insertFolder(folder);
     }
 
-    public void deleteFolder(Folder folder) {
-        mRepository.deleteFolder(folder);
+    public List<Folder> deleteFolder(Folder folder) {
+        return mRepository.deleteFolder(folder);
     }
 
-    public void updateFolder(Folder folder) {
-        mRepository.updateFolder(folder);
+    public List<Folder> updateFolder(Folder folder) {
+        return mRepository.updateFolder(folder);
     }
 
 }
