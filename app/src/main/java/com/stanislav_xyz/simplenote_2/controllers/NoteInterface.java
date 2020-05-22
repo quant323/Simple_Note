@@ -1,4 +1,4 @@
-package com.stanislav_xyz.simplenote_2.activities;
+package com.stanislav_xyz.simplenote_2.controllers;
 
 public interface NoteInterface {
 
@@ -11,5 +11,7 @@ public interface NoteInterface {
     void showKeyBoard(boolean inFab);
 
     String getTextFromEditText();
+
+    void showOptionDelItem(boolean show);
 
 }

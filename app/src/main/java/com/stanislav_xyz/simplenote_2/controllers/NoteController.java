@@ -1,10 +1,8 @@
-package com.stanislav_xyz.simplenote_2.activities;
-
+package com.stanislav_xyz.simplenote_2.controllers;
 
 import android.content.Intent;
 
 import com.stanislav_xyz.simplenote_2.R;
-import com.stanislav_xyz.simplenote_2.controllers.MainController;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
@@ -49,6 +47,7 @@ public class NoteController {
     public void onFabPressed() {
         mNoteInterface.setEditToEditText(true);
         mNoteInterface.hideFab();
+        mNoteInterface.showOptionDelItem(false);
         mNoteInterface.showKeyBoard(true);
     }
 
@@ -71,6 +70,10 @@ public class NoteController {
             Utils.showToast(mActivity, R.string.mes_note_deleted);
             mActivity.finish();
         }
+    }
+
+    public void optionsMenuCreated() {
+        mNoteInterface.showOptionDelItem(mNote != null);
     }
 
     public void onStop(boolean requireSaving) {

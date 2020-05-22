@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stanislav_xyz.simplenote_2.R;
+import com.stanislav_xyz.simplenote_2.controllers.NoteController;
+import com.stanislav_xyz.simplenote_2.controllers.NoteInterface;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
     private int mEtTextColor;
     private NoteController mNoteController;
     private FloatingActionButton fab;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.note_menu, menu);
+        mMenu = menu;
+        mNoteController.optionsMenuCreated();
         return true;
     }
 
@@ -97,6 +102,11 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
     @Override
     public String getTextFromEditText() {
         return mNoteEditText.getText().toString();
+    }
+
+    @Override
+    public void showOptionDelItem(boolean show) {
+        mMenu.findItem(R.id.action_note_delete).setVisible(show);
     }
 
     @Override
