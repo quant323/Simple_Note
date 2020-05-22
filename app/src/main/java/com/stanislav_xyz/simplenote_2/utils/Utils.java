@@ -1,5 +1,7 @@
 package com.stanislav_xyz.simplenote_2.utils;
 
+import android.content.Context;
+import android.widget.Toast;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 
@@ -45,6 +47,24 @@ public class Utils {
                 return true;
         }
         return false;
+    }
+
+    // Возвращает title указанной длины из тела заметки
+    public static String getTitle(String body, int length) {
+        String[] arr = body.split("\n");
+        if (arr[0].length() < length) {
+            return arr[0];
+        } else {
+            return arr[0].substring(0, length);
+        }
+    }
+
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showToast(Context context, int mesId) {
+        Toast.makeText(context, mesId, Toast.LENGTH_SHORT).show();
     }
 
 }

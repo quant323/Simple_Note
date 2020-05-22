@@ -5,15 +5,10 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stanislav_xyz.simplenote_2.R;
-import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
-import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
-import com.stanislav_xyz.simplenote_2.model.Note;
-import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,16 +17,13 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-public class NoteActivity extends AppCompatActivity {
-
-    private static final int MAX_TITLE_LENGTH = 20;
+public class NoteActivity extends AppCompatActivity implements NoteInterface {
 
     private EditText mNoteEditText;
-    private Note mNote;
-    private NoteViewModel mNoteViewModel;
-    private String mFolder;
     private boolean mRequireSaving = true;
     private int mEtTextColor;
+    private NoteController mNoteController;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,35 +43,14 @@ public class NoteActivity extends AppCompatActivity {
         mNoteEditText = findViewById(R.id.note_editText);
         mEtTextColor = mNoteEditText.getCurrentTextColor();
 
-
-        final FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Возвращает EditText функцию редактирования
-                setEditableET(true);
-                // Показывает клавиатуру
-                InputMethodManager methodManager =
-                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                methodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                fab.hide();
+                mNoteController.onFabPressed();
             }
         });
-
-        if (getIntent().hasExtra(ActivityStarter.EXTRA_NOTE)) {
-            mNote = getIntent().getParcelableExtra(ActivityStarter.EXTRA_NOTE);
-            mNoteEditText.setText(mNote.getBody());
-            // Превращает EditText в TextView
-            setEditableET(false);
-        }
-
-        if (getIntent().hasExtra(ActivityStarter.EXTRA_FOLDER)) {
-            mFolder = getIntent().getStringExtra(ActivityStarter.EXTRA_FOLDER);
-            // Показывает клавиатуру
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            fab.hide();
-        }
-        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        mNoteController = new NoteController(this, this, getIntent());
     }
 
     @Override
@@ -97,65 +68,51 @@ public class NoteActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_note_delete:
-                if (mNote != null) {
-                    new DeleteDialog(this, DeleteDialog.ACTION_DELETE_NOTE,
-                            new DeleteDialog.DeleteDialogListener() {
-                        @Override
-                        public void onDeleteConfirm() {
-                            mNoteViewModel.deleteNote(mNote);
-                            finish();
-                        }
-                    }).show(getSupportFragmentManager(), null);
-                    break;
-                }
+                mNoteController.onMenuDelPressed();
+                break;
         }
         return true;
     }
 
+    @Override
+    protected void onStop() {
+        mNoteController.onStop(mRequireSaving);
+        super.onStop();
+    }
+
     // Убирает или восстанавливает функцию редактировния у EditText
-    private void setEditableET(boolean editable) {
+    @Override
+    public void setEditToEditText(boolean editable) {
         mNoteEditText.setEnabled(editable);
         mNoteEditText.setCursorVisible(editable);
         if (!editable)
             mNoteEditText.setTextColor(mEtTextColor);
     }
 
-    // Устанавливает новые данные для заметки
-    private Note setNewValues(Note note, String body) {
-        note.setBody(body);
-        note.setTitle(getTitle(body));
-        note.setDate(System.currentTimeMillis());
-        return note;
-    }
-
-    // Сохраняет новую, либо обновляет существующую заметку
-    private void saveNote() {
-        String body = mNoteEditText.getText().toString();
-        if (mNote != null) {
-            if (!mNote.getBody().equals(body)) {
-                mNoteViewModel.update(setNewValues(mNote, body));
-            }
-        } else {
-            if (!body.equals("")) {
-                mNote = new Note(body, getTitle(body), System.currentTimeMillis(), mFolder);
-                mNoteViewModel.insert(mNote);
-            }
-        }
-    }
-
-    // Возвращает title из тела заметки
-    private String getTitle(String body) {
-        String[] arr = body.split("\n");
-        if (arr[0].length() < MAX_TITLE_LENGTH) {
-            return arr[0];
-        } else {
-            return arr[0].substring(0, MAX_TITLE_LENGTH);
-        }
+    @Override
+    public void setTextEditText(String text) {
+        mNoteEditText.setText(text);
     }
 
     @Override
-    protected void onStop() {
-        if (mRequireSaving) saveNote();
-        super.onStop();
+    public String getTextFromEditText() {
+        return mNoteEditText.getText().toString();
     }
+
+    @Override
+    public void hideFab() {
+        fab.hide();
+    }
+
+    @Override
+    public void showKeyBoard(boolean inFab) {
+        if (inFab) {
+            InputMethodManager methodManager =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            methodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        } else {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
+    }
+
 }

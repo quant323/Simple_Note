@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -70,7 +69,6 @@ public class MainActivity extends AppCompatActivity
             curFolderId = savedInstanceState.getInt(STATE_CUR_FOLDER_ID);
         else
             curFolderId = MainController.INITIAL_FOLDER_ID;
-
         mMainController = new MainController(this, this, curFolderId);
 
         fab = findViewById(R.id.fab);
@@ -78,6 +76,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 mMainController.onFabPressed();
+            }
+        });
+
+        // Слушатель нажатия на заметку в RecyclerView
+        mAdapter.setOnItemClickListener(new NoteListAdapter.ClickListener() {
+            @Override
+            public void onItemClickListener(View v, int position) {
+                mMainController.onItemNotePressed(position);
             }
         });
     }
@@ -110,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         final int position = item.getGroupId();
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                mMainController.onContextOpenPressed();
+                mMainController.onContextOpenPressed(position);
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
                 mMainController.onContextDelPressed(position);
@@ -197,16 +203,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void updateNoteResView(List<Note> notes) {
         mAdapter.setNotes(notes);
-    }
-
-    @Override
-    public void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showToast(int id) {
-        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
-import android.app.Activity;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +8,8 @@ import android.widget.TextView;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.model.Note;
-import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +23,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public static final int CONTEXT_MOVE_ID = 102;
 
     private List<Note> mNotes;
+    private ClickListener mClickListener;
 
     // Устанавливает список заметок
     void setNotes(List<Note> notes) {
@@ -69,11 +67,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ActivityStarter.startNoteActivity((Activity) itemView.getContext(),
-                            mNotes.get(getAdapterPosition()));
+                    mClickListener.onItemClickListener(v, getAdapterPosition());
                 }
             });
-
             itemView.setOnCreateContextMenuListener(this);
         }
 
@@ -90,6 +86,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             menu.add(this.getAdapterPosition(), CONTEXT_DEL_ID, 0, R.string.action_context_delete);
             menu.add(this.getAdapterPosition(), CONTEXT_MOVE_ID, 0, R.string.action_context_move);
         }
+    }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onItemClickListener(View v, int position);
     }
 
 }

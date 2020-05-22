@@ -1,6 +1,10 @@
 package com.stanislav_xyz.simplenote_2.controllers;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.stanislav_xyz.simplenote_2.R;
+import com.stanislav_xyz.simplenote_2.activities.NoteActivity;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.dialogs.AboutDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
@@ -8,7 +12,6 @@ import com.stanislav_xyz.simplenote_2.dialogs.MoveNoteDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.NewFolderDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
-import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ public class MainController {
 
     private static final String TAG = "myTag";
     public static final int INITIAL_FOLDER_ID = 0;
+    public static final String EXTRA_FOLDER = "NoteActivity.EXTRA_FOLDER";
+    public static final String EXTRA_NOTE = "NoteActivity.EXTRA_NOTE";
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
@@ -31,7 +36,7 @@ public class MainController {
     private List<Note> mNotesInCurFolder = new ArrayList<>();
     private List<Folder> mFolderList;
     private Folder mCurFolder;
-    private Folder mBinFolder;
+    private static Folder mBinFolder;
 
     // Конструктор
     public MainController(FragmentActivity activity, MainInterface mainInterface, int curFolderId) {
@@ -73,14 +78,14 @@ public class MainController {
     }
 
     public void onFabPressed() {
-        ActivityStarter.startNoteActivity(mActivity, mCurFolder.getName());
+        startNoteActivity(mActivity, mCurFolder, null);
     }
 
     public void onMenuDelPressed() {
         if (mNotesInCurFolder.size() < 1) {
             deleteFolder(mCurFolder);
         } else {
-            mMainInterface.showToast(R.string.mes_folder_is_not_empty);
+            Utils.showToast(mActivity, R.string.mes_folder_is_not_empty);
         }
     }
 
@@ -111,8 +116,8 @@ public class MainController {
         }
     }
 
-    public void onContextOpenPressed() {
-        ActivityStarter.startNoteActivity(mActivity, mCurFolder.getName());
+    public void onContextOpenPressed(int position) {
+        startNoteActivity(mActivity, mCurFolder, mNotesInCurFolder.get(position));
     }
 
     public void onContextDelPressed(final int position) {
@@ -149,7 +154,7 @@ public class MainController {
     }
 
     public void onNavSettingsPressed() {
-        mMainInterface.showToast("Settings folder is pressed!");
+        Utils.showToast(mActivity, "Settings folder is pressed!");
         mMainInterface.setToolbarTitle(mActivity.getString(R.string.nav_settings));
     }
 
@@ -173,12 +178,20 @@ public class MainController {
         mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
+    public void onItemNotePressed(int position) {
+        startNoteActivity(mActivity, mCurFolder, mNotesInCurFolder.get(position));
+    }
+
     public int getCurFolderId() {
         return mCurFolder.getId();
     }
 
+    public static Folder getBinFolder() {
+        return mBinFolder;
+    }
+
     private void createNewFolder(String name) {
-        if (!Utils.isFolderNameExists(name, mFolderList)) {
+        if (!Utils.isFolderNameExists(name, mFolderList) && !name.equals(mBinFolder.getName())) {
             // Находим папку, находящуюся в списке последней
             Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
             // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
@@ -189,7 +202,7 @@ public class MainController {
             mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
             updateNoteList();
         } else {
-            mMainInterface.showToast(R.string.mes_folder_exists);
+            Utils.showToast(mActivity, R.string.mes_folder_exists);
         }
     }
 
@@ -225,6 +238,13 @@ public class MainController {
         mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
         mMainInterface.setToolbarTitle(mCurFolder.getName());
+    }
+
+    private static void startNoteActivity(Activity activity, Folder folder, Note note) {
+        Intent intent = new Intent(activity, NoteActivity.class);
+        intent.putExtra(EXTRA_FOLDER, folder);
+        intent.putExtra(EXTRA_NOTE, note);
+        activity.startActivity(intent);
     }
 
 }

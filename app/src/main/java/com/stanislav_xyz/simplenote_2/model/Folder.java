@@ -1,6 +1,9 @@
 package com.stanislav_xyz.simplenote_2.model;
 
-public class Folder {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Folder implements Parcelable {
 
     private int id;
     private String name;
@@ -11,6 +14,36 @@ public class Folder {
         this.name = name;
         this.date = date;
     }
+
+    protected Folder(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        date = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeLong(date);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Folder> CREATOR = new Creator<Folder>() {
+        @Override
+        public Folder createFromParcel(Parcel in) {
+            return new Folder(in);
+        }
+
+        @Override
+        public Folder[] newArray(int size) {
+            return new Folder[size];
+        }
+    };
 
     public int getId() {
         return id;

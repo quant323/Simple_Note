@@ -19,10 +19,6 @@ public interface MainInterface {
 
     void updateNoteResView(List<Note> notes);
 
-    void showToast(String text);
-
-    void showToast(int id);
-
     void showSnack(String text);
 
     void showSnack(int id);
