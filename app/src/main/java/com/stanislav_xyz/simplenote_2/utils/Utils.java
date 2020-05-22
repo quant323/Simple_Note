@@ -9,7 +9,7 @@ import java.util.List;
 public class Utils {
 
     // Возвращает нажатую папку по id
-    public static Folder getPressedFolder(int id, List<Folder> folderList) {
+    public static Folder getFolderById(int id, List<Folder> folderList) {
         for (int i = 0; i < folderList.size(); i++) {
             if (folderList.get(i).getId() == id)
                 return folderList.get(i);
@@ -35,6 +35,16 @@ public class Utils {
             }
         }
         return notesInFolder;
+    }
+
+    // Проверяет, имеется ли в листе папок папка с указанным именем.
+    // Возвращает true, если такая папка имеется
+    public static boolean isFolderNameExists(String name, List<Folder> folders) {
+        for(Folder folder : folders) {
+            if (folder.getName().toLowerCase().trim().equals(name.toLowerCase().trim()))
+                return true;
+        }
+        return false;
     }
 
 }

@@ -41,5 +41,6 @@
     <string name="mes_note_moved_to_bin">Note moved to Bin!</string>
     <string name="mes_note_deleted">Note deleted!</string>
     <string name="mes_bin_is_empty">Bin is Empty!</string>
+    <string name="mes_folder_exists">This folder already exists</string>
 
 </resources>

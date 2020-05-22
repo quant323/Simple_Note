@@ -1,9 +1,6 @@
 package com.stanislav_xyz.simplenote_2.data;
 
 import android.app.Application;
-import android.util.Log;
-
-import com.stanislav_xyz.simplenote_2.activities.MainActivity;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.WorkWithSharedPref;
@@ -11,7 +8,7 @@ import com.stanislav_xyz.simplenote_2.utils.WorkWithSharedPref;
 import java.util.List;
 import androidx.lifecycle.LiveData;
 
-public class NoteRepository {
+class NoteRepository {
 
     private NoteDao mNoteDao;
     private static LiveData<List<Note>> mAllNotes;
@@ -20,7 +17,7 @@ public class NoteRepository {
 
 
     // Конструктор
-    public NoteRepository(Application application) {
+    NoteRepository(Application application) {
         NoteRoomDatabase db = NoteRoomDatabase.getDatabase(application);
         mNoteDao = db.noteDao();
         mAllNotes = mNoteDao.getAllNotes();
@@ -29,11 +26,11 @@ public class NoteRepository {
     }
 
     // Работа с заметками
-    public LiveData<List<Note>> getAllNotes() {
+    LiveData<List<Note>> getAllNotes() {
         return mAllNotes;
     }
 
-    public void insert(final Note note) {
+    void insert(final Note note) {
         new QueryAsyncTask(new QueryAsyncTask.AsyncBack() {
             @Override
             public void workInBackground() {
@@ -42,7 +39,7 @@ public class NoteRepository {
         }).execute();
     }
 
-    public void delete(final Note note) {
+    void delete(final Note note) {
         new QueryAsyncTask(new QueryAsyncTask.AsyncBack() {
             @Override
             public void workInBackground() {
@@ -51,7 +48,7 @@ public class NoteRepository {
         }).execute();
     }
 
-    public void update(final Note note) {
+    void update(final Note note) {
         new QueryAsyncTask(new QueryAsyncTask.AsyncBack() {
             @Override
             public void workInBackground() {
@@ -62,19 +59,19 @@ public class NoteRepository {
 
 
     //  Работа с папками
-    public List<Folder> getAllFolders() {
+    List<Folder> getAllFolders() {
         return getFoldersFromSharedPref();
     }
 
-    public List<Folder> insertFolder(Folder folder) {
+    List<Folder> insertFolder(Folder folder) {
         return insertFolderToSharedPref(folder);
     }
 
-    public List<Folder> deleteFolder(Folder folder) {
+    List<Folder> deleteFolder(Folder folder) {
         return deleteFolderFromSharedPref(folder);
     }
 
-    public List<Folder> updateFolder(Folder folder) {
+    List<Folder> updateFolder(Folder folder) {
         return updateFolderInSharedPref(folder);
     }
 

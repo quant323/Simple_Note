@@ -21,11 +21,10 @@ import androidx.lifecycle.ViewModelProviders;
 public class MainController {
 
     private static final String TAG = "myTag";
-    private static final int INITIAL_FOLDER_ID = 0;
+    public static final int INITIAL_FOLDER_ID = 0;
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
-
     private NoteViewModel mNoteViewModel;
 
     private List<Note> mNotes;
@@ -35,11 +34,12 @@ public class MainController {
     private Folder mBinFolder;
 
     // Конструктор
-    public MainController(FragmentActivity activity, MainInterface mainInterface) {
+    public MainController(FragmentActivity activity, MainInterface mainInterface, int curFolderId) {
         mActivity = activity;
         mMainInterface = mainInterface;
         mNoteViewModel = ViewModelProviders.of(activity).get(NoteViewModel.class);
         initFolderList();
+        mCurFolder = Utils.getFolderById(curFolderId, mFolderList);
         initDrawerMenu();
         mBinFolder = new Folder(mActivity.getString(R.string.nav_bin), 0, R.id.nav_bin);
         mNoteViewModel.getAllNotes().observe(activity, new Observer<List<Note>>() {
@@ -59,7 +59,6 @@ public class MainController {
             mNoteViewModel.insertFolder(folder);
             mFolderList = mNoteViewModel.getAllFolders();
         }
-        mCurFolder = mFolderList.get(0);
     }
 
     private void initDrawerMenu() {
@@ -169,21 +168,29 @@ public class MainController {
     }
 
     public void onNavNormalFolderPressed(int id) {
-        mCurFolder = Utils.getPressedFolder(id, mFolderList);
+        mCurFolder = Utils.getFolderById(id, mFolderList);
         updateNoteList();
         mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
+    public int getCurFolderId() {
+        return mCurFolder.getId();
+    }
+
     private void createNewFolder(String name) {
-        // Находим папку, находящуюся в списке последней
-        Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
-        // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
-        mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
-        mFolderList = mNoteViewModel.insertFolder(mCurFolder);
-        mMainInterface.addDrawerMenuItem(mCurFolder, R.drawable.ic_folder);
-        mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-        mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
-        updateNoteList();
+        if (!Utils.isFolderNameExists(name, mFolderList)) {
+            // Находим папку, находящуюся в списке последней
+            Folder lastFolder = mFolderList.get(mFolderList.size() - 1);
+            // Создаем новую папку. В качестве id указываем id последней папки, увеличенную на 1
+            mCurFolder = new Folder(name, System.currentTimeMillis(), (lastFolder.getId() + 1));
+            mFolderList = mNoteViewModel.insertFolder(mCurFolder);
+            mMainInterface.addDrawerMenuItem(mCurFolder, R.drawable.ic_folder);
+            mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
+            mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
+            updateNoteList();
+        } else {
+            mMainInterface.showToast(R.string.mes_folder_exists);
+        }
     }
 
     private void deleteFolder(Folder folder) {

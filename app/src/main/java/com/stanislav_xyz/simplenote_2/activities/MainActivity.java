@@ -15,6 +15,7 @@ import com.stanislav_xyz.simplenote_2.controllers.MainController;
 import com.stanislav_xyz.simplenote_2.controllers.MainInterface;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
+
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainInterface {
 
     public static final String TAG = "myTag";
+    private static final String STATE_CUR_FOLDER_ID = "cur_folder_id";
 
     private NoteListAdapter mAdapter = new NoteListAdapter();
     private DrawerLayout mDrawer;
@@ -63,7 +65,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         mNavigationMenu = navigationView.getMenu();
 
-        mMainController = new MainController(this, this);
+        int curFolderId;
+        if (savedInstanceState != null)
+            curFolderId = savedInstanceState.getInt(STATE_CUR_FOLDER_ID);
+        else
+            curFolderId = MainController.INITIAL_FOLDER_ID;
+
+        mMainController = new MainController(this, this, curFolderId);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +139,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_add_new_folder:
                 mMainController.onNavAddFolderPressed();
+                setItemsVisibility(true);
                 break;
             default:
                 mMainController.onNavNormalFolderPressed(id);
@@ -148,6 +157,13 @@ public class MainActivity extends AppCompatActivity
         mMainMenu.findItem(R.id.action_clean_bin).setVisible(!visibility);
         if (visibility) fab.show();
         else fab.hide();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        // При перевороте экрана сохраняем id текущей папки
+        outState.putInt(STATE_CUR_FOLDER_ID, mMainController.getCurFolderId());
+        super.onSaveInstanceState(outState);
     }
 
     // Методы интерфейса

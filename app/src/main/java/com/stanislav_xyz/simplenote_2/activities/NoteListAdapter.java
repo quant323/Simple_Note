@@ -11,6 +11,9 @@ import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.ActivityStarter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -77,7 +80,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
         private void bind(Note note) {
             noteTitle_tV.setText(note.getTitle());
-            date_tv.setText(String.valueOf(note.getDate()));
+            String date = DateFormat.getDateTimeInstance().format(new Date(note.getDate()));
+            date_tv.setText(date);
         }
 
         @Override
