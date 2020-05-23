@@ -32,7 +32,7 @@ public class Utils {
     public static List<Note> getNotesFromFolder(List<Note> notes, Folder folder) {
         List<Note> notesInFolder = new ArrayList<>();
         for (int i = 0; i < notes.size(); i++) {
-            if (notes.get(i).getFolder().equals(folder.getName())) {
+            if (notes.get(i).getFolderName().equals(folder.getName())) {
                 notesInFolder.add(notes.get(i));
             }
         }

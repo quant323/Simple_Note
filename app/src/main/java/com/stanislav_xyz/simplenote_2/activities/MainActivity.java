@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         mMainMenu = menu;
         setItemsVisibility(mIsItemsVisible);
-        setEnableDelMenu(mIsDelMenuEnabled);
+        setEnableMainMenuItems(mIsDelMenuEnabled);
         return true;
     }
 
@@ -227,8 +227,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void setEnableDelMenu(boolean enable) {
+    public void setEnableMainMenuItems(boolean enable) {
         mMainMenu.findItem(R.id.action_delete_folder).setEnabled(enable);
+        mMainMenu.findItem(R.id.action_rename_folder).setEnabled(enable);
         mIsDelMenuEnabled = enable;
     }
 

@@ -23,6 +23,7 @@ public class NoteController {
     private Note mNote;
     private Folder mFolder;
 
+    // Конструктор
     public NoteController (FragmentActivity activity, NoteInterface noteInterface, Intent intent) {
         mActivity = activity;
         mNoteInterface = noteInterface;
@@ -58,7 +59,7 @@ public class NoteController {
                         new DeleteDialog.DeleteDialogListener() {
                             @Override
                             public void onDeleteConfirm() {
-                                mNote.setFolder(MainController.getBinFolder().getName());
+                                mNote.setFolderName(MainController.getBinFolder().getName());
                                 mNoteViewModel.update(mNote);
                                 Utils.showToast(mActivity, R.string.mes_note_moved_to_bin);
                                 mActivity.finish();

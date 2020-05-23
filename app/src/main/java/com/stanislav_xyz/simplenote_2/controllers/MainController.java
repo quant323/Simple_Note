@@ -101,6 +101,7 @@ public class MainController {
 
     public void onMenuRenamePressed() {
         String message = mActivity.getString(R.string.action_rename_folder);
+
         new NewFolderDialog(mActivity, message, mCurFolder.getName(),
                 new NewFolderDialog.FolderDialogListener() {
                     @Override
@@ -108,6 +109,7 @@ public class MainController {
                         renameFolder(name, mCurFolder);
                     }
                 }).show(mActivity.getSupportFragmentManager(), null);
+
     }
 
     public void onMenuCleanBinPressed() {
@@ -135,7 +137,7 @@ public class MainController {
                     new DeleteDialog.DeleteDialogListener() {
                         @Override
                         public void onDeleteConfirm() {
-                            note.setFolder(mBinFolder.getName());
+                            note.setFolderName(mBinFolder.getName());
                             mNoteViewModel.update(note);
                             mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
                         }
@@ -183,7 +185,7 @@ public class MainController {
     public void onNavNormalFolderPressed(int id) {
         mCurFolder = Utils.getFolderById(id, mFolderList);
         updateNoteList();
-        mMainInterface.setEnableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
+        mMainInterface.setEnableMainMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
     public void onItemNotePressed(Note note) {
@@ -207,7 +209,7 @@ public class MainController {
             mFolderList = mNoteViewModel.insertFolder(mCurFolder);
             mMainInterface.addDrawerMenuItem(mCurFolder, R.drawable.ic_folder);
             mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-            mMainInterface.setEnableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
+            mMainInterface.setEnableMainMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
             updateNoteList();
         } else Utils.showToast(mActivity, R.string.mes_folder_exists);
     }
@@ -217,7 +219,7 @@ public class MainController {
         mMainInterface.deleteDrawerMenuItem(folder);
         mCurFolder = mFolderList.get(0);
         mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-        mMainInterface.setEnableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
+        mMainInterface.setEnableMainMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
         updateNoteList();
     }
 
@@ -226,7 +228,7 @@ public class MainController {
         mFolderList = mNoteViewModel.updateFolder(folder);
         // Обновляем Notes в БД
         for (Note note : mNotesInCurFolder) {
-            note.setFolder(folder.getName());
+            note.setFolderName(folder.getName());
             mNoteViewModel.update(note);
         }
         mMainInterface.renameDrawerMenuItem(folder);
@@ -235,7 +237,7 @@ public class MainController {
 
     private void moveNote(int folderIndex, Note note) {
         Folder folder = mFolderList.get(folderIndex);
-        note.setFolder(folder.getName());
+        note.setFolderName(folder.getName());
         mNoteViewModel.update(note);
     }
 

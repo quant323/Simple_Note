@@ -1,13 +1,11 @@
 <resources>
 
-    <string name="app_name">SimplyNoteIt!</string>
+    <string name="app_name">Simple Note</string>
+    <string name="app_version">_v0.1</string>
+    <string name="title_activity_note">Simply NoteIt!</string>
+    <string name="default_folder_name">My Notes</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="default_folder_name">My Notes</string>
-
-    <string name="home_second">Home Second</string>
-    <string name="title_activity_note">NoteActivity</string>
-    <string name="note_hint_text">Enter your note here…</string>
 
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
@@ -42,5 +40,7 @@
     <string name="mes_note_deleted">Note deleted!</string>
     <string name="mes_bin_is_empty">Bin is Empty!</string>
     <string name="mes_folder_exists">This folder already exists</string>
+
+    <string name="hint_note_text">Enter your note here…</string>
 
 </resources>

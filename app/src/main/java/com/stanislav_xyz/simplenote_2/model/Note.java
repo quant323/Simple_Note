@@ -23,13 +23,13 @@ public class Note implements Parcelable {
     private long date;
 
     @ColumnInfo
-    private String folder;
+    private String folderName;
 
-    public Note(String body, String title, long date, String folder) {
+    public Note(String body, String title, long date, String folderName) {
         this.body = body;
         this.title = title;
         this.date = date;
-        this.folder = folder;
+        this.folderName = folderName;
     }
 
     public String getBody() {
@@ -44,8 +44,8 @@ public class Note implements Parcelable {
         return date;
     }
 
-    public String getFolder() {
-        return folder;
+    public String getFolderName() {
+        return folderName;
     }
 
     public int getUdi() {
@@ -64,8 +64,8 @@ public class Note implements Parcelable {
         this.date = date;
     }
 
-    public void setFolder(String folder) {
-        this.folder = folder;
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 
     public void setUdi(int udi) {
@@ -78,7 +78,7 @@ public class Note implements Parcelable {
         title = in.readString();
         body = in.readString();
         date = in.readLong();
-        folder = in.readString();
+        folderName = in.readString();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class Note implements Parcelable {
         dest.writeString(title);
         dest.writeString(body);
         dest.writeLong(date);
-        dest.writeString(folder);
+        dest.writeString(folderName);
     }
 
     @Override
