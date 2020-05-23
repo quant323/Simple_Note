@@ -82,11 +82,9 @@ public class MainController {
     }
 
     public void onMenuDelPressed() {
-        if (mNotesInCurFolder.size() < 1) {
+        if (mNotesInCurFolder.size() < 1)
             deleteFolder(mCurFolder);
-        } else {
-            Utils.showToast(mActivity, R.string.mes_folder_is_not_empty);
-        }
+        else Utils.showToast(mActivity, R.string.mes_folder_is_not_empty);
     }
 
     public void onMenuRenamePressed() {
@@ -201,9 +199,7 @@ public class MainController {
             mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
             mMainInterface.enableDelMenu(mCurFolder.getId() != INITIAL_FOLDER_ID);
             updateNoteList();
-        } else {
-            Utils.showToast(mActivity, R.string.mes_folder_exists);
-        }
+        } else Utils.showToast(mActivity, R.string.mes_folder_exists);
     }
 
     private void deleteFolder(Folder folder) {
