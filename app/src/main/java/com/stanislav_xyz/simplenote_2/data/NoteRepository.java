@@ -12,9 +12,9 @@ import androidx.lifecycle.LiveData;
 class NoteRepository {
 
     private NoteDao mNoteDao;
-    private static LiveData<List<Note>> mAllNotes;
+    private LiveData<List<Note>> mAllNotes;
     private WorkWithSharedPref mSharedPref;
-    private static List<Folder> mAllFolders;
+    private List<Folder> mAllFolders;
 
 
     // Конструктор

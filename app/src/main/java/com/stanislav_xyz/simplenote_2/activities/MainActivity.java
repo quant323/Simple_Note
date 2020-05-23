@@ -32,6 +32,11 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = "myTag";
     private static final String STATE_CUR_FOLDER_ID = "cur_folder_id";
+    private static final String STATE_MENU_ITEMS = "menu_items_state";
+    private static final String STATE_DEL_MENU = "del_menu_state";
+
+    private boolean mIsItemsVisible = true;
+    private boolean mIsDelMenuEnabled = false;
 
     private NoteListAdapter mAdapter = new NoteListAdapter();
     private DrawerLayout mDrawer;
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton fab;
     private MainController mMainController;
     private Menu mMainMenu;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +54,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this,
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
 
         mDrawer = findViewById(R.id.drawer_layout);
@@ -65,8 +71,11 @@ public class MainActivity extends AppCompatActivity
         mNavigationMenu = navigationView.getMenu();
 
         int curFolderId;
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             curFolderId = savedInstanceState.getInt(STATE_CUR_FOLDER_ID);
+            mIsItemsVisible = savedInstanceState.getBoolean(STATE_MENU_ITEMS);
+            mIsDelMenuEnabled = savedInstanceState.getBoolean(STATE_DEL_MENU);
+        }
         else
             curFolderId = MainController.INITIAL_FOLDER_ID;
         mMainController = new MainController(this, this, curFolderId);
@@ -82,8 +91,8 @@ public class MainActivity extends AppCompatActivity
         // Слушатель нажатия на заметку в RecyclerView
         mAdapter.setOnItemClickListener(new NoteListAdapter.ClickListener() {
             @Override
-            public void onItemClickListener(View v, int position) {
-                mMainController.onItemNotePressed(position);
+            public void onItemClickListener(View v, Note note) {
+                mMainController.onItemNotePressed(note);
             }
         });
     }
@@ -92,6 +101,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         mMainMenu = menu;
+        setItemsVisibility(mIsItemsVisible);
+        setEnableDelMenu(mIsDelMenuEnabled);
         return true;
     }
 
@@ -114,15 +125,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         final int position = item.getGroupId();
+        Note note = mAdapter.getSortedNotes().get(position);
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                mMainController.onContextOpenPressed(position);
+                mMainController.onContextOpenPressed(note);
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
-                mMainController.onContextDelPressed(position);
+                mMainController.onContextDelPressed(note);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
-                mMainController.onContextMovePressed(position);
+                mMainController.onContextMovePressed(note);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -152,6 +164,7 @@ public class MainActivity extends AppCompatActivity
                 setItemsVisibility(true);
                 break;
         }
+        mRecyclerView.scrollToPosition(0);
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -163,12 +176,14 @@ public class MainActivity extends AppCompatActivity
         mMainMenu.findItem(R.id.action_clean_bin).setVisible(!visibility);
         if (visibility) fab.show();
         else fab.hide();
+        mIsItemsVisible = visibility;
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        // При перевороте экрана сохраняем id текущей папки
         outState.putInt(STATE_CUR_FOLDER_ID, mMainController.getCurFolderId());
+        outState.putBoolean(STATE_MENU_ITEMS, mIsItemsVisible);
+        outState.putBoolean(STATE_DEL_MENU, mIsDelMenuEnabled);
         super.onSaveInstanceState(outState);
     }
 
@@ -206,18 +221,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void showSnack(String text) {
-        Snackbar.make(findViewById(R.id.coordinator_main), text, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
     public void showSnack(int id) {
         Snackbar.make(findViewById(R.id.coordinator_main), id, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
-    public void enableDelMenu(boolean enable) {
+    public void setEnableDelMenu(boolean enable) {
         mMainMenu.findItem(R.id.action_delete_folder).setEnabled(enable);
+        mIsDelMenuEnabled = enable;
     }
 
 }

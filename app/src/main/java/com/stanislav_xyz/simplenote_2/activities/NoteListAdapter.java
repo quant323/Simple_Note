@@ -23,7 +23,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public static final int CONTEXT_DEL_ID = 101;
     public static final int CONTEXT_MOVE_ID = 102;
 
-    private List<Note> mNotes;
     private SortedList<Note> mSortedNotes;
     private ClickListener mClickListener;
 
@@ -71,8 +70,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     // Устанавливает список заметок
     void setNotes(List<Note> notes) {
         mSortedNotes.replaceAll(notes);
-//        mNotes = notes;
-//        notifyDataSetChanged();
     }
 
     @NonNull
@@ -96,6 +93,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             return 0;
     }
 
+    public SortedList<Note> getSortedNotes() {
+        return mSortedNotes;
+    }
+
 
     class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
@@ -111,7 +112,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mClickListener.onItemClickListener(v, getAdapterPosition());
+                    mClickListener.onItemClickListener(v, mSortedNotes.get(getAdapterPosition()));
                 }
             });
             itemView.setOnCreateContextMenuListener(this);
@@ -137,7 +138,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     }
 
     public interface ClickListener {
-        void onItemClickListener(View v, int position);
+        void onItemClickListener(View v, Note note);
     }
 
 }

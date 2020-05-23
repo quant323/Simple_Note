@@ -19,10 +19,8 @@ public interface MainInterface {
 
     void updateNoteResView(List<Note> notes);
 
-    void showSnack(String text);
-
     void showSnack(int id);
 
-    void enableDelMenu(boolean enable);
+    void setEnableDelMenu(boolean enable);
 
 }
