@@ -54,6 +54,7 @@ public class MainController {
             public void onChanged(List<Note> notes) {
                 mNotes = notes;
                 updateNoteList();
+                setNoteAmountToDrawerMenuItem(mFolderList, mNotes);
             }
         });
     }
@@ -65,6 +66,15 @@ public class MainController {
                     System.currentTimeMillis(), INITIAL_FOLDER_ID);
             mNoteViewModel.insertFolder(folder);
             mFolderList = mNoteViewModel.getAllFolders();
+        }
+    }
+
+    // Устанавливает в DrawerMenu item's кол-во заметок в папках
+    private void setNoteAmountToDrawerMenuItem(List<Folder> folderList, List<Note> noteList) {
+        int curAmount;
+        for (Folder folder : folderList) {
+            curAmount = Utils.getNotesFromFolder(noteList, folder).size();
+            mMainInterface.setExtraTextToDrawerMenuItem(folder, curAmount);
         }
     }
 
@@ -111,9 +121,8 @@ public class MainController {
                     mMainInterface.showSnack(R.string.mes_bin_is_empty);
                 }
             }).show(mActivity.getSupportFragmentManager(), null);
-        } else {
-            mMainInterface.showSnack(R.string.mes_bin_is_empty);
-        }
+        } else mMainInterface.showSnack(R.string.mes_bin_is_empty);
+
     }
 
     public void onContextOpenPressed(Note note) {
@@ -126,7 +135,6 @@ public class MainController {
                     new DeleteDialog.DeleteDialogListener() {
                         @Override
                         public void onDeleteConfirm() {
-                            //                           Note note = mNotesInCurFolder.get(position);
                             note.setFolder(mBinFolder.getName());
                             mNoteViewModel.update(note);
                             mMainInterface.showSnack(R.string.mes_note_moved_to_bin);

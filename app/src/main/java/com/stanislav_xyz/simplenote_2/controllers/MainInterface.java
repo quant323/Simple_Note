@@ -17,10 +17,12 @@ public interface MainInterface {
 
     void setCheckedDrawerMenuItem(Folder folder);
 
+    void setExtraTextToDrawerMenuItem(Folder folder, int noteAmount);
+
+    void setEnableDelMenu(boolean enable);
+
     void updateNoteResView(List<Note> notes);
 
     void showSnack(int id);
-
-    void setEnableDelMenu(boolean enable);
 
 }

@@ -1,9 +1,11 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -195,9 +197,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void addDrawerMenuItem(Folder folder, int iconId) {
+        TextView view = new TextView(this);
+        view.setGravity(Gravity.CENTER_VERTICAL);
         mNavigationMenu.add(R.id.folder_group, folder.getId(), mNavigationMenu.NONE, folder.getName())
                 .setIcon(iconId)
-                .setCheckable(true);
+                .setCheckable(true)
+                .setActionView(view);
     }
 
     @Override
@@ -216,6 +221,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void setExtraTextToDrawerMenuItem(Folder folder, int noteAmount) {
+        ((TextView) mNavigationMenu.findItem(folder.getId()).getActionView())
+                .setText(String.valueOf(noteAmount));
+    }
+
+    @Override
+    public void setEnableDelMenu(boolean enable) {
+        mMainMenu.findItem(R.id.action_delete_folder).setEnabled(enable);
+        mIsDelMenuEnabled = enable;
+    }
+
+    @Override
     public void updateNoteResView(List<Note> notes) {
         mAdapter.setNotes(notes);
     }
@@ -223,12 +240,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showSnack(int id) {
         Snackbar.make(findViewById(R.id.coordinator_main), id, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void setEnableDelMenu(boolean enable) {
-        mMainMenu.findItem(R.id.action_delete_folder).setEnabled(enable);
-        mIsDelMenuEnabled = enable;
     }
 
 }
