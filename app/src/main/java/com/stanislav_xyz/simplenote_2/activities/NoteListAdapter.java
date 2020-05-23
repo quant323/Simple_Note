@@ -15,6 +15,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolder> {
 
@@ -23,12 +24,55 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public static final int CONTEXT_MOVE_ID = 102;
 
     private List<Note> mNotes;
+    private SortedList<Note> mSortedNotes;
     private ClickListener mClickListener;
+
+
+    // Конструктор
+    public NoteListAdapter() {
+        mSortedNotes = new SortedList<>(Note.class, new SortedList.Callback<Note>() {
+            @Override
+            public int compare(Note o1, Note o2) {
+                return (int)((o2.getDate() - o1.getDate())/100);
+            }
+
+            @Override
+            public void onChanged(int position, int count) {
+                notifyItemRangeChanged(position, count);
+            }
+
+            @Override
+            public boolean areContentsTheSame(Note oldItem, Note newItem) {
+                return oldItem.equals(newItem);
+            }
+
+            @Override
+            public boolean areItemsTheSame(Note item1, Note item2) {
+                return item1.getUdi() == item2.getUdi();
+            }
+
+            @Override
+            public void onInserted(int position, int count) {
+                notifyItemRangeInserted(position, count);
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                notifyItemRangeRemoved(position, count);
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                notifyItemMoved(fromPosition, toPosition);
+            }
+        });
+    }
 
     // Устанавливает список заметок
     void setNotes(List<Note> notes) {
-        mNotes = notes;
-        notifyDataSetChanged();
+        mSortedNotes.replaceAll(notes);
+//        mNotes = notes;
+//        notifyDataSetChanged();
     }
 
     @NonNull
@@ -41,13 +85,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
-        holder.bind(mNotes.get(position));
+        holder.bind(mSortedNotes.get(position));
     }
 
     @Override
     public int getItemCount() {
-        if (mNotes != null)
-            return mNotes.size();
+        if (mSortedNotes != null)
+            return mSortedNotes.size();
         else
             return 0;
     }
