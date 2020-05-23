@@ -5,6 +5,7 @@ import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.WorkWithSharedPref;
 
+import java.util.ArrayList;
 import java.util.List;
 import androidx.lifecycle.LiveData;
 
@@ -82,6 +83,8 @@ class NoteRepository {
     }
 
     private List<Folder> insertFolderToSharedPref(Folder folder) {
+        if (mAllFolders == null)
+            mAllFolders = new ArrayList<>();
         mAllFolders.add(folder);
         mSharedPref.saveInSharedPref(mAllFolders);
         return mAllFolders;
