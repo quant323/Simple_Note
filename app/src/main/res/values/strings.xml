@@ -3,6 +3,7 @@
     <string name="app_name">Simple Note</string>
     <string name="app_version">_v0.1</string>
     <string name="title_activity_note">Simply NoteIt!</string>
+    <string name="title_settings_activity">Settings</string>
     <string name="default_folder_name">My Notes</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -40,7 +41,13 @@
     <string name="mes_note_deleted">Note deleted!</string>
     <string name="mes_bin_is_empty">Bin is Empty!</string>
     <string name="mes_folder_exists">This folder already exists</string>
+    <string name="mes_not_yet_implemented">Not yet implemented :(</string>
 
     <string name="hint_note_text">Enter your note here…</string>
+
+    <string name="set_export_title">Export Notes</string>
+    <string name="set_export_text">Export notes and folders to file</string>
+    <string name="set_import_title">Import Notes</string>
+    <string name="set_import_text">Import notes and folders from file</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity
                 setItemsVisibility(false);
                 break;
             case R.id.nav_settings:
-                mMainController.onNavSettingsPressed();
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.nav_about:
                 mMainController.onNavAboutPressed();

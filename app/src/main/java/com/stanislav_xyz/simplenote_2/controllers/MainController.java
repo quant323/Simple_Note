@@ -163,11 +163,6 @@ public class MainController {
         updateNoteList();
     }
 
-    public void onNavSettingsPressed() {
-        Utils.showToast(mActivity, "Settings folder is pressed!");
-        mMainInterface.setToolbarTitle(mActivity.getString(R.string.nav_settings));
-    }
-
     public void onNavAboutPressed() {
         new AboutDialog(mActivity).show(mActivity.getSupportFragmentManager(), null);
     }

@@ -48,13 +48,13 @@ public class DeleteDialog extends AppCompatDialogFragment {
         return new AlertDialog.Builder(context)
                 .setTitle(titleId)
                 .setMessage(messageId)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialogListener.onDeleteConfirm();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create();
     }
 
