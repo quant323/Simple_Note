@@ -23,7 +23,7 @@ class NoteRepository {
         mNoteDao = db.noteDao();
         mAllNotes = mNoteDao.getAllNotes();
         mSharedPref = new WorkWithSharedPref(application.getApplicationContext());
-        mAllFolders = mSharedPref.loadFromSharedPref();
+        mAllFolders = mSharedPref.getFromSharedPref();
     }
 
     // Работа с заметками

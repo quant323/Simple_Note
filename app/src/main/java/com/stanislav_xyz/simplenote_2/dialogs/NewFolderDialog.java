@@ -45,6 +45,7 @@ public class NewFolderDialog extends AppCompatDialogFragment {
         final EditText newFolderName_ET = new EditText(context);
         newFolderName_ET.setLayoutParams(new LinearLayout.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        newFolderName_ET.setSingleLine(true);
         if (curFolderName != null)
             newFolderName_ET.setText(curFolderName);
         else

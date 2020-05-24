@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity
     private static final String STATE_MENU_ITEMS = "menu_items_state";
     private static final String STATE_DEL_MENU = "del_menu_state";
 
-    private boolean mIsItemsVisible = true;
-    private boolean mIsDelMenuEnabled = false;
+    private boolean mItemsVisibleState = true;
+    private boolean mMenuEnableState = false;
 
     private NoteListAdapter mAdapter = new NoteListAdapter();
     private DrawerLayout mDrawer;
@@ -75,11 +75,11 @@ public class MainActivity extends AppCompatActivity
         int curFolderId;
         if (savedInstanceState != null) {
             curFolderId = savedInstanceState.getInt(STATE_CUR_FOLDER_ID);
-            mIsItemsVisible = savedInstanceState.getBoolean(STATE_MENU_ITEMS);
-            mIsDelMenuEnabled = savedInstanceState.getBoolean(STATE_DEL_MENU);
+            mItemsVisibleState = savedInstanceState.getBoolean(STATE_MENU_ITEMS);
+            mMenuEnableState = savedInstanceState.getBoolean(STATE_DEL_MENU);
         }
-        else
-            curFolderId = MainController.INITIAL_FOLDER_ID;
+        else curFolderId = MainController.INITIAL_FOLDER_ID;
+
         mMainController = new MainController(this, this, curFolderId);
 
         fab = findViewById(R.id.fab);
@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         mMainMenu = menu;
-        setItemsVisibility(mIsItemsVisible);
-        setEnableMainMenuItems(mIsDelMenuEnabled);
+        setItemsVisibility(mItemsVisibleState);
+        setEnableMenuItems(mMenuEnableState);
         return true;
     }
 
@@ -178,14 +178,14 @@ public class MainActivity extends AppCompatActivity
         mMainMenu.findItem(R.id.action_clean_bin).setVisible(!visibility);
         if (visibility) fab.show();
         else fab.hide();
-        mIsItemsVisible = visibility;
+        mItemsVisibleState = visibility;
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt(STATE_CUR_FOLDER_ID, mMainController.getCurFolderId());
-        outState.putBoolean(STATE_MENU_ITEMS, mIsItemsVisible);
-        outState.putBoolean(STATE_DEL_MENU, mIsDelMenuEnabled);
+        outState.putBoolean(STATE_MENU_ITEMS, mItemsVisibleState);
+        outState.putBoolean(STATE_DEL_MENU, mMenuEnableState);
         super.onSaveInstanceState(outState);
     }
 
@@ -227,10 +227,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void setEnableMainMenuItems(boolean enable) {
+    public void setEnableMenuItems(boolean enable) {
         mMainMenu.findItem(R.id.action_delete_folder).setEnabled(enable);
         mMainMenu.findItem(R.id.action_rename_folder).setEnabled(enable);
-        mIsDelMenuEnabled = enable;
+        mMenuEnableState = enable;
     }
 
     @Override

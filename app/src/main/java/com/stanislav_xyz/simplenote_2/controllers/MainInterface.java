@@ -19,7 +19,7 @@ public interface MainInterface {
 
     void setExtraTextToDrawerMenuItem(Folder folder, int noteAmount);
 
-    void setEnableMainMenuItems(boolean enable);
+    void setEnableMenuItems(boolean enable);
 
     void updateNoteResView(List<Note> notes);
 

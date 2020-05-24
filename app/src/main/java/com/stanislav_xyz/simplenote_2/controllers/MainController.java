@@ -69,15 +69,6 @@ public class MainController {
         }
     }
 
-    // Устанавливает в DrawerMenu item's кол-во заметок в папках
-    private void setNoteAmountToDrawerMenuItem(List<Folder> folderList, List<Note> noteList) {
-        int curAmount;
-        for (Folder folder : folderList) {
-            curAmount = Utils.getNotesFromFolder(noteList, folder).size();
-            mMainInterface.setExtraTextToDrawerMenuItem(folder, curAmount);
-        }
-    }
-
     private void initDrawerMenu() {
         for (int i = 0; i < mFolderList.size(); i++) {
             if (i != 0) {
@@ -86,6 +77,15 @@ public class MainController {
                 mMainInterface.addDrawerMenuItem(mFolderList.get(i), R.drawable.ic_home);
                 mMainInterface.setCheckedDrawerMenuItem(mFolderList.get(i));
             }
+        }
+    }
+
+    // Устанавливает в DrawerMenu item's кол-во заметок в папках
+    private void setNoteAmountToDrawerMenuItem(List<Folder> folderList, List<Note> noteList) {
+        int curAmount;
+        for (Folder folder : folderList) {
+            curAmount = Utils.getNotesFromFolder(noteList, folder).size();
+            mMainInterface.setExtraTextToDrawerMenuItem(folder, curAmount);
         }
     }
 
@@ -185,7 +185,7 @@ public class MainController {
     public void onNavNormalFolderPressed(int id) {
         mCurFolder = Utils.getFolderById(id, mFolderList);
         updateNoteList();
-        mMainInterface.setEnableMainMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
+        mMainInterface.setEnableMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
     public void onItemNotePressed(Note note) {
@@ -209,7 +209,7 @@ public class MainController {
             mFolderList = mNoteViewModel.insertFolder(mCurFolder);
             mMainInterface.addDrawerMenuItem(mCurFolder, R.drawable.ic_folder);
             mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-            mMainInterface.setEnableMainMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
+            mMainInterface.setEnableMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
             updateNoteList();
         } else Utils.showToast(mActivity, R.string.mes_folder_exists);
     }
@@ -219,7 +219,7 @@ public class MainController {
         mMainInterface.deleteDrawerMenuItem(folder);
         mCurFolder = mFolderList.get(0);
         mMainInterface.setCheckedDrawerMenuItem(mCurFolder);
-        mMainInterface.setEnableMainMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
+        mMainInterface.setEnableMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
         updateNoteList();
     }
 

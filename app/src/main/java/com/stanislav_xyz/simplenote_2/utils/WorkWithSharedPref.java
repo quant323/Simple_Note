@@ -31,7 +31,7 @@ public class WorkWithSharedPref {
         editor.apply();
     }
 
-    public List<Folder> loadFromSharedPref() {
+    public List<Folder> getFromSharedPref() {
         List<Folder> folderList;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -41,7 +41,7 @@ public class WorkWithSharedPref {
         return folderList;
     }
 
-    public void cleanFromSharedPref() {
+    public void cleanSharedPref() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor preferencesEditor = sharedPreferences.edit();
         preferencesEditor.clear();

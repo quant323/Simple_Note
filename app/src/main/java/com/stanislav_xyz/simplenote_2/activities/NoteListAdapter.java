@@ -89,12 +89,19 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public int getItemCount() {
         if (mSortedNotes != null)
             return mSortedNotes.size();
-        else
-            return 0;
+        else return 0;
     }
 
     public SortedList<Note> getSortedNotes() {
         return mSortedNotes;
+    }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        mClickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onItemClickListener(View v, Note note);
     }
 
 
@@ -131,14 +138,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             menu.add(this.getAdapterPosition(), CONTEXT_DEL_ID, 0, R.string.action_context_delete);
             menu.add(this.getAdapterPosition(), CONTEXT_MOVE_ID, 0, R.string.action_context_move);
         }
-    }
-
-    public void setOnItemClickListener(ClickListener clickListener) {
-        mClickListener = clickListener;
-    }
-
-    public interface ClickListener {
-        void onItemClickListener(View v, Note note);
     }
 
 }
