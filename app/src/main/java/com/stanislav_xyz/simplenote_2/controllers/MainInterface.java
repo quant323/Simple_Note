@@ -21,6 +21,8 @@ public interface MainInterface {
 
     void setEnableMenuItems(boolean enable);
 
+    void setItemsVisibility(boolean visibility);
+
     void updateNoteResView(List<Note> notes);
 
     void showSnack(int id);

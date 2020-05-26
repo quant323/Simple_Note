@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_add_new_folder:
                 mMainController.onNavAddFolderPressed();
-                setItemsVisibility(true);
                 break;
             default:
                 mMainController.onNavNormalFolderPressed(id);
@@ -173,7 +172,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Управляет отображением пунктов главного меню
-    private void setItemsVisibility(boolean visibility) {
+    @Override
+    public void setItemsVisibility(boolean visibility) {
         mMainMenu.findItem(R.id.action_delete_folder).setVisible(visibility);
         mMainMenu.findItem(R.id.action_rename_folder).setVisible(visibility);
         mMainMenu.findItem(R.id.action_clean_bin).setVisible(!visibility);

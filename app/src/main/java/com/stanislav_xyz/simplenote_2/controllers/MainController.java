@@ -173,6 +173,7 @@ public class MainController {
             @Override
             public void onFolderConfirm(String name) {
                 createNewFolder(name);
+                mMainInterface.setItemsVisibility(true);
             }
         }).show(mActivity.getSupportFragmentManager(), null);
     }
