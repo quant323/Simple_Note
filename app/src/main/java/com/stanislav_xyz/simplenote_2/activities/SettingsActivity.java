@@ -2,16 +2,30 @@ package com.stanislav_xyz.simplenote_2.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.stanislav_xyz.simplenote_2.R;
-import com.stanislav_xyz.simplenote_2.dialogs.NotImplDialog;
+import com.stanislav_xyz.simplenote_2.model.Folder;
+import com.stanislav_xyz.simplenote_2.model.Note;
+import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
+import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
+import com.stanislav_xyz.simplenote_2.utils.Utils;
+
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final String TAG = "myTag";
+    private static final String APP_NAME = "Simple Note";
+
+    private List<Folder> mFolderList;
+    private List<Note> mNoteList;
+
+    private NoteFileManager mFileManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +42,44 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        mFolderList = getIntent().getParcelableArrayListExtra(MainPresenter.EXTRA_FOLDER_LIST);
+        mNoteList = getIntent().getParcelableArrayListExtra(MainPresenter.EXTRA_NOTE_LIST);
+
         findViewById(R.id.settings_export_item).setOnClickListener(this);
         findViewById(R.id.settings_import_item).setOnClickListener(this);
+        findViewById(R.id.settings_export_to_text).setOnClickListener(this);
+
+        mFileManager = new NoteFileManager(this);
+
     }
 
     @Override
     public void onClick(View v) {
-        new NotImplDialog(this).show(getSupportFragmentManager(), null);
+        switch (v.getId()) {
+            case R.id.settings_export_item:
+                Toast.makeText(this, "Export files", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.settings_import_item:
+                Toast.makeText(this, "Import files", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.settings_export_to_text:
+                exportNotesToText();
+                break;
+        }
+
     }
+
+    private void exportNotesToText() {
+        for (Folder folder : mFolderList) {
+            String path = Environment.getExternalStorageDirectory() + "/"
+                    + APP_NAME + "/" + folder.getName();
+            List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
+            for(Note note : notesInFolder)
+                mFileManager.writeFile(path, note.getTitle() + ".txt", note.getBody());
+        }
+        Snackbar.make(findViewById(R.id.coordinator_settings),
+                R.string.mes_export_finished, Snackbar.LENGTH_LONG).show();
+    }
+
+
 }

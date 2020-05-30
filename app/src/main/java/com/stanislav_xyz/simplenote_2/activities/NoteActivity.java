@@ -5,8 +5,8 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.stanislav_xyz.simplenote_2.R;
-import com.stanislav_xyz.simplenote_2.controllers.NoteController;
-import com.stanislav_xyz.simplenote_2.controllers.NoteInterface;
+import com.stanislav_xyz.simplenote_2.presenters.NotePresenter;
+import com.stanislav_xyz.simplenote_2.presenters.NoteInterface;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,7 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
     private EditText mNoteEditText;
     private boolean mRequireSaving = true;
     private int mEtTextColor;
-    private NoteController mNoteController;
+    private NotePresenter mNotePresenter;
     private FloatingActionButton fab;
     private Menu mMenu;
 
@@ -50,17 +50,17 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNoteController.onFabPressed();
+                mNotePresenter.onFabPressed();
             }
         });
-        mNoteController = new NoteController(this, this, getIntent());
+        mNotePresenter = new NotePresenter(this, this, getIntent());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.note_menu, menu);
         mMenu = menu;
-        mNoteController.optionsMenuCreated();
+        mNotePresenter.optionsMenuCreated();
         return true;
     }
 
@@ -73,7 +73,7 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
                 finish();
                 break;
             case R.id.action_note_delete:
-                mNoteController.onMenuDelPressed();
+                mNotePresenter.onMenuDelPressed();
                 break;
         }
         return true;
@@ -81,7 +81,7 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
 
     @Override
     protected void onStop() {
-        mNoteController.onStop(mRequireSaving);
+        mNotePresenter.onStop(mRequireSaving);
         super.onStop();
     }
 

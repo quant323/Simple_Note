@@ -13,8 +13,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.stanislav_xyz.simplenote_2.R;
 
-import com.stanislav_xyz.simplenote_2.controllers.MainController;
-import com.stanislav_xyz.simplenote_2.controllers.MainInterface;
+import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
+import com.stanislav_xyz.simplenote_2.presenters.MainInterface;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawer;
     private Menu mNavigationMenu;
     private FloatingActionButton fab;
-    private MainController mMainController;
+    private MainPresenter mMainPresenter;
     private Menu mMainMenu;
     private RecyclerView mRecyclerView;
 
@@ -79,15 +79,15 @@ public class MainActivity extends AppCompatActivity
             mItemsVisibleState = savedInstanceState.getBoolean(STATE_MENU_ITEMS);
             mMenuEnableState = savedInstanceState.getBoolean(STATE_DEL_MENU);
         }
-        else curFolderId = MainController.INITIAL_FOLDER_ID;
+        else curFolderId = MainPresenter.INITIAL_FOLDER_ID;
 
-        mMainController = new MainController(this, this, curFolderId);
+        mMainPresenter = new MainPresenter(this, this, curFolderId);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainController.onFabPressed();
+                mMainPresenter.onFabPressed();
             }
         });
 
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         mAdapter.setOnItemClickListener(new NoteListAdapter.ClickListener() {
             @Override
             public void onItemClickListener(View v, Note note) {
-                mMainController.onItemNotePressed(note);
+                mMainPresenter.onItemNotePressed(note);
             }
         });
     }
@@ -113,13 +113,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete_folder:
-                mMainController.onMenuDelPressed();
+                mMainPresenter.onMenuDelPressed();
                 return true;
             case R.id.action_rename_folder:
-                mMainController.onMenuRenamePressed();
+                mMainPresenter.onMenuRenamePressed();
                 return true;
             case R.id.action_clean_bin:
-                mMainController.onMenuCleanBinPressed();
+                mMainPresenter.onMenuCleanBinPressed();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -131,13 +131,13 @@ public class MainActivity extends AppCompatActivity
         Note note = mAdapter.getSortedNotes().get(position);
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                mMainController.onContextOpenPressed(note);
+                mMainPresenter.onContextOpenPressed(note);
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
-                mMainController.onContextDelPressed(note);
+                mMainPresenter.onContextDelPressed(note);
                 return true;
             case NoteListAdapter.CONTEXT_MOVE_ID:
-                mMainController.onContextMovePressed(note);
+                mMainPresenter.onContextMovePressed(note);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -149,20 +149,20 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_bin:
-                mMainController.onNavBinPressed();
+                mMainPresenter.onNavBinPressed();
                 setItemsVisibility(false);
                 break;
             case R.id.nav_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                mMainPresenter.onNavSettingsPressed();
                 break;
             case R.id.nav_about:
-                mMainController.onNavAboutPressed();
+                mMainPresenter.onNavAboutPressed();
                 break;
             case R.id.nav_add_new_folder:
-                mMainController.onNavAddFolderPressed();
+                mMainPresenter.onNavAddFolderPressed();
                 break;
             default:
-                mMainController.onNavNormalFolderPressed(id);
+                mMainPresenter.onNavNormalFolderPressed(id);
                 setItemsVisibility(true);
                 break;
         }
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(STATE_CUR_FOLDER_ID, mMainController.getCurFolderId());
+        outState.putInt(STATE_CUR_FOLDER_ID, mMainPresenter.getCurFolderId());
         outState.putBoolean(STATE_MENU_ITEMS, mItemsVisibleState);
         outState.putBoolean(STATE_DEL_MENU, mMenuEnableState);
         super.onSaveInstanceState(outState);

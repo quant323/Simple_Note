@@ -1,4 +1,4 @@
-package com.stanislav_xyz.simplenote_2.controllers;
+package com.stanislav_xyz.simplenote_2.presenters;
 
 import android.content.Intent;
 
@@ -12,7 +12,7 @@ import com.stanislav_xyz.simplenote_2.utils.Utils;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-public class NoteController {
+public class NotePresenter {
 
     private static final int MAX_TITLE_LENGTH = 25;
 
@@ -24,7 +24,7 @@ public class NoteController {
     private Folder mFolder;
 
     // Конструктор
-    public NoteController (FragmentActivity activity, NoteInterface noteInterface, Intent intent) {
+    public NotePresenter(FragmentActivity activity, NoteInterface noteInterface, Intent intent) {
         mActivity = activity;
         mNoteInterface = noteInterface;
         mIntent = intent;
@@ -33,8 +33,8 @@ public class NoteController {
     }
 
     private void initialisation() {
-        mFolder = mIntent.getParcelableExtra(MainController.EXTRA_FOLDER);
-        mNote = mIntent.getParcelableExtra(MainController.EXTRA_NOTE);
+        mFolder = mIntent.getParcelableExtra(MainPresenter.EXTRA_FOLDER);
+        mNote = mIntent.getParcelableExtra(MainPresenter.EXTRA_NOTE);
         if (mNote != null) {
             mNoteInterface.setTextEditText(mNote.getBody());
             // Превращает EditText в TextView
@@ -53,13 +53,13 @@ public class NoteController {
     }
 
     public void onMenuDelPressed() {
-        if (mFolder.getId() != MainController.getBinFolder().getId()) {
+        if (mFolder.getId() != MainPresenter.getBinFolder().getId()) {
             if (mNote != null) {
                 new DeleteDialog(mActivity, DeleteDialog.ACTION_DELETE_NOTE,
                         new DeleteDialog.DeleteDialogListener() {
                             @Override
                             public void onDeleteConfirm() {
-                                mNote.setFolderName(MainController.getBinFolder().getName());
+                                mNote.setFolderName(MainPresenter.getBinFolder().getName());
                                 mNoteViewModel.update(mNote);
                                 Utils.showToast(mActivity, R.string.mes_note_moved_to_bin);
                                 mActivity.finish();

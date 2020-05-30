@@ -1,10 +1,10 @@
-package com.stanislav_xyz.simplenote_2.controllers;
+package com.stanislav_xyz.simplenote_2.presenters;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.activities.NoteActivity;
+import com.stanislav_xyz.simplenote_2.activities.SettingsActivity;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.dialogs.AboutDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
@@ -21,25 +21,27 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-public class MainController {
+public class MainPresenter {
 
     private static final String TAG = "myTag";
     public static final int INITIAL_FOLDER_ID = 0;
     public static final String EXTRA_FOLDER = "NoteActivity.EXTRA_FOLDER";
     public static final String EXTRA_NOTE = "NoteActivity.EXTRA_NOTE";
+    public static final String EXTRA_FOLDER_LIST = "SettingsActivity.EXTRA_FOLDER_LIST";
+    public static final String EXTRA_NOTE_LIST = "SettingsActivity.EXTRA_NOTE_LIST";
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
     private NoteViewModel mNoteViewModel;
 
-    private List<Note> mNotes;
+    private List<Note> mNoteList;
     private List<Note> mNotesInCurFolder = new ArrayList<>();
     private List<Folder> mFolderList;
     private Folder mCurFolder;
     private static Folder mBinFolder;
 
     // Конструктор
-    public MainController(FragmentActivity activity, final MainInterface mainInterface, int curFolderId) {
+    public MainPresenter(FragmentActivity activity, final MainInterface mainInterface, int curFolderId) {
         mActivity = activity;
         mMainInterface = mainInterface;
         mNoteViewModel = ViewModelProviders.of(activity).get(NoteViewModel.class);
@@ -52,9 +54,9 @@ public class MainController {
         mNoteViewModel.getAllNotes().observe(activity, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
-                mNotes = notes;
+                mNoteList = notes;
                 updateNoteList();
-                setNoteAmountToDrawerMenuItem(mFolderList, mNotes);
+                setNoteAmountToDrawerMenuItem(mFolderList, mNoteList);
             }
         });
     }
@@ -90,7 +92,7 @@ public class MainController {
     }
 
     public void onFabPressed() {
-        startNoteActivity(mActivity, mCurFolder, null);
+        startNoteActivity(mCurFolder, null);
     }
 
     public void onMenuDelPressed() {
@@ -128,7 +130,7 @@ public class MainController {
     }
 
     public void onContextOpenPressed(Note note) {
-        startNoteActivity(mActivity, mCurFolder, note);
+        startNoteActivity(mCurFolder, note);
     }
 
     public void onContextDelPressed(final Note note) {
@@ -163,6 +165,10 @@ public class MainController {
         updateNoteList();
     }
 
+    public void onNavSettingsPressed() {
+        startSettingsActivity();
+    }
+
     public void onNavAboutPressed() {
         new AboutDialog(mActivity).show(mActivity.getSupportFragmentManager(), null);
     }
@@ -185,7 +191,7 @@ public class MainController {
     }
 
     public void onItemNotePressed(Note note) {
-        startNoteActivity(mActivity, mCurFolder, note);
+        startNoteActivity(mCurFolder, note);
     }
 
     public int getCurFolderId() {
@@ -238,16 +244,23 @@ public class MainController {
     }
 
     private void updateNoteList() {
-        mNotesInCurFolder = Utils.getNotesFromFolder(mNotes, mCurFolder);
+        mNotesInCurFolder = Utils.getNotesFromFolder(mNoteList, mCurFolder);
         mMainInterface.updateNoteResView(mNotesInCurFolder);
         mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
-    private static void startNoteActivity(Activity activity, Folder folder, Note note) {
-        Intent intent = new Intent(activity, NoteActivity.class);
+    private void startNoteActivity(Folder folder, Note note) {
+        Intent intent = new Intent(mActivity, NoteActivity.class);
         intent.putExtra(EXTRA_FOLDER, folder);
         intent.putExtra(EXTRA_NOTE, note);
-        activity.startActivity(intent);
+        mActivity.startActivity(intent);
+    }
+
+    private void startSettingsActivity() {
+        Intent intent = new Intent(mActivity, SettingsActivity.class);
+        intent.putParcelableArrayListExtra(EXTRA_FOLDER_LIST, (ArrayList<Folder>) mFolderList);
+        intent.putParcelableArrayListExtra(EXTRA_NOTE_LIST, (ArrayList<Note>) mNoteList);
+        mActivity.startActivity(intent);
     }
 
 }

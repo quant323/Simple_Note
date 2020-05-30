@@ -42,6 +42,8 @@
     <string name="mes_bin_is_empty">Bin is Empty!</string>
     <string name="mes_folder_exists">This folder already exists</string>
     <string name="mes_not_yet_implemented">Not yet implemented :(</string>
+    <string name="mes_export_finished">Export is finished!</string>
+    <string name="mes_permission_denied">Permission denied!</string>
 
     <string name="hint_note_text">Enter your note here…</string>
 
@@ -49,5 +51,7 @@
     <string name="set_export_text">Export notes and folders to file</string>
     <string name="set_import_title">Import Notes</string>
     <string name="set_import_text">Import notes and folders from file</string>
+    <string name="set_export_to_text_title">Export Notes to Text</string>
+    <string name="set_export_to_text_text">Export notes to text files</string>
 
 </resources>

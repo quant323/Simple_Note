@@ -1,4 +1,4 @@
-package com.stanislav_xyz.simplenote_2.controllers;
+package com.stanislav_xyz.simplenote_2.presenters;
 
 public interface NoteInterface {
 
