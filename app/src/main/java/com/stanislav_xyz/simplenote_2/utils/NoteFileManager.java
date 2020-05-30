@@ -4,6 +4,7 @@ package com.stanislav_xyz.simplenote_2.utils;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
 
@@ -42,11 +43,18 @@ public class NoteFileManager {
                 fos.write(body.getBytes());
                 fos.close();
                 Log.d(TAG, "File Saved!");
+                scanFile(mContext, noteFile, "txt");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
 
+    }
+
+    // Позволяет проводнику Windows находить созданный файл
+    private void scanFile(Context context, File file, String mimeType) {
+        MediaScannerConnection.scanFile(context, new String[] {file.getAbsolutePath()},
+                new String[] {mimeType}, null);
     }
 
     private boolean isExternalStorageWritable() {
@@ -62,6 +70,5 @@ public class NoteFileManager {
         int check = ContextCompat.checkSelfPermission(mContext, permission);
         return (check == PackageManager.PERMISSION_GRANTED);
     }
-
 
 }
