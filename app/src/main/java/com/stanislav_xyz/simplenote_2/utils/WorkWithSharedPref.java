@@ -26,7 +26,7 @@ public class WorkWithSharedPref {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        java.lang.String json = gson.toJson(folderList);
+        String json = gson.toJson(folderList);
         editor.putString(PREFERENCES_FOLDERS, json);
         editor.apply();
     }
@@ -35,7 +35,7 @@ public class WorkWithSharedPref {
         List<Folder> folderList;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        java.lang.String json = sharedPreferences.getString(PREFERENCES_FOLDERS, null);
+        String json = sharedPreferences.getString(PREFERENCES_FOLDERS, null);
         Type type = new TypeToken<List<Folder>>(){}.getType();
         folderList = gson.fromJson(json, type);
         return folderList;
