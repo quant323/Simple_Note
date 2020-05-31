@@ -3,6 +3,8 @@ package com.stanislav_xyz.simplenote_2.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 public class Folder implements Parcelable {
 
     private int id;
@@ -67,5 +69,13 @@ public class Folder implements Parcelable {
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
+        Folder folder = (Folder) obj;
+        return this.getName().equals(folder.getName());
     }
 }

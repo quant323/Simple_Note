@@ -111,7 +111,6 @@ public class MainPresenter {
                         renameFolder(name, mCurFolder);
                     }
                 }).show(mActivity.getSupportFragmentManager(), null);
-
     }
 
     public void onMenuCleanBinPressed() {
@@ -126,7 +125,6 @@ public class MainPresenter {
                 }
             }).show(mActivity.getSupportFragmentManager(), null);
         } else mMainInterface.showSnack(R.string.mes_bin_is_empty);
-
     }
 
     public void onContextOpenPressed(Note note) {

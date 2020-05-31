@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -108,4 +109,12 @@ public class Note implements Parcelable {
             return new Note[size];
         }
     };
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
+        Note note = (Note) obj;
+        return this.getUdi() == note.getUdi();
+    }
 }

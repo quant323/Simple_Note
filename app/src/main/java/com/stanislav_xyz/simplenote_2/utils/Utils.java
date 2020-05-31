@@ -53,9 +53,9 @@ public class Utils {
     public static String getTitle(String body, int length) {
         String[] arr = body.split("\n");
         if (arr[0].length() < length) {
-            return arr[0];
+            return arr[0].trim();
         } else {
-            return arr[0].substring(0, length);
+            return arr[0].substring(0, length).trim();
         }
     }
 

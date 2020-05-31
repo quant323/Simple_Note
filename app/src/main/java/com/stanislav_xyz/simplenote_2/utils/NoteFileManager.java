@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.stanislav_xyz.simplenote_2.R;
+import com.stanislav_xyz.simplenote_2.activities.SettingsActivity;
+import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 
 import java.io.File;
@@ -32,97 +34,69 @@ public class NoteFileManager {
 
     public void writeTextFile(String pathName, String fileName, String body) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Создаем папку по указанному пути
-            File filePath = new File(pathName);
-            if (!filePath.exists()) {
-                filePath.mkdirs();
-                Log.d(TAG, "Folder has been created!");
-            } else Log.d(TAG, "Folder already exists!");
-
-            // Создаем пустой файл в указанной папке
-            File noteFile = new File(filePath, fileName);
-
+            // Создаем файл в указанной папке
+            File noteFile = createFile(pathName, fileName);
             // Записываем текст заметки в файл
             try {
                 FileOutputStream fos = new FileOutputStream(noteFile);
                 fos.write(body.getBytes());
                 fos.close();
                 Log.d(TAG, "File Saved!");
-                scanFile(mContext, noteFile, "txt");
+                scanFile(mContext, noteFile, SettingsActivity.MIME_TEXT);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
-
     }
 
-
-    public void writeFile(String pathName, String fileName, Note note) {
+    public void writeFile(String pathName, String fileName, String notes, String folders) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Создаем папку по указанному пути
-            File filePath = new File(pathName);
-            if (!filePath.exists()) {
-                filePath.mkdirs();
-                Log.d(TAG, "Folder has been created!");
-            } else Log.d(TAG, "Folder already exists!");
-
-            // Создаем пустой файл в указанной папке
-            File noteFile = new File(filePath, fileName);
-
+            // Создаем файл в указанной папке
+            File noteFile = createFile(pathName, fileName);
             // Записываем объект в файл
             try {
                 FileOutputStream fos = new FileOutputStream(noteFile);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject("noteIt!");
-                oos.writeObject("folderIt!");
+                oos.writeObject(notes);
+                oos.writeObject(folders);
                 fos.close();
                 oos.close();
                 Utils.showToast(mContext, "File Saved!");
- //               Log.d(TAG, "File Saved!");
-              scanFile(mContext, noteFile, "sno");
+              scanFile(mContext, noteFile, SettingsActivity.MIME_FILE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
     }
 
-    public void readFile(String pathName, String fileName) {
-        if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Создаем папку по указанному пути
-            File filePath = new File(pathName);
-            if (!filePath.exists()) {
-                filePath.mkdirs();
-                Log.d(TAG, "Folder has been created!");
-            } else Log.d(TAG, "Folder already exists!");
-
-            // Создаем пустой файл в указанной папке
-            File noteFile = new File(filePath, fileName);
-
-            // Записываем объект в файл
+    public String[] readFile(String pathName, String fileName) {
+        if (isExternalStorageReadable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Создаем файл в указанной папке
+            File noteFile = createFile(pathName, fileName);
+            // Читаем объекты из файла
             try {
                 FileInputStream fis = new FileInputStream(noteFile);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                String mes1 = (String) ois.readObject();
-                String mes2 = (String) ois.readObject();
-                Log.d(TAG, "mes1 - " + mes1);
-                Log.d(TAG, "mes2 - " + mes2);
+                String notes = (String) ois.readObject();
+                String folders = (String) ois.readObject();
                 fis.close();
                 ois.close();
                 Utils.showToast(mContext, "File Loaded!");
-
-//                FileOutputStream fos = new FileOutputStream(noteFile);
-//                ObjectOutputStream oos = new ObjectOutputStream(fos);
-//                oos.writeObject("notes");
-//                oos.writeObject("folders");
-//                fos.close();
-//                oos.close();
-//                Utils.showToast(mContext, "File Saved!");
-//                //               Log.d(TAG, "File Saved!");
-//                scanFile(mContext, noteFile, "sno");
+                return new String[] {notes, folders};
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
+        return null;
+    }
+
+    private File createFile(String pathName, String fileName) {
+        File filePath = new File(pathName);
+        if (!filePath.exists()) {
+            filePath.mkdirs();
+            Log.d(TAG, "Folder has been created!");
+        } else Log.d(TAG, "Folder already exists!");
+        return new File(filePath, fileName);
     }
 
     // Позволяет проводнику Windows находить созданный файл

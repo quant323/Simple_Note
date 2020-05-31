@@ -42,7 +42,8 @@
     <string name="mes_bin_is_empty">Bin is Empty!</string>
     <string name="mes_folder_exists">This folder already exists</string>
     <string name="mes_not_yet_implemented">Not yet implemented :(</string>
-    <string name="mes_export_finished">Export is finished!</string>
+    <string name="mes_export_finished">Export Finished!</string>
+    <string name="mes_import_finished">Import Finished!</string>
     <string name="mes_permission_denied">Permission denied!</string>
 
     <string name="hint_note_text">Enter your note here…</string>
