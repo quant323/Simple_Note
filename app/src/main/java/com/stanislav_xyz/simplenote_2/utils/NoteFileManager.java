@@ -34,9 +34,7 @@ public class NoteFileManager {
 
     public void writeTextFile(String pathName, String fileName, String body) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Создаем файл в указанной папке
             File noteFile = createFile(pathName, fileName);
-            // Записываем текст заметки в файл
             try {
                 FileOutputStream fos = new FileOutputStream(noteFile);
                 fos.write(body.getBytes());
@@ -51,9 +49,7 @@ public class NoteFileManager {
 
     public void writeFile(String pathName, String fileName, String notes, String folders) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Создаем файл в указанной папке
             File noteFile = createFile(pathName, fileName);
-            // Записываем объект в файл
             try {
                 FileOutputStream fos = new FileOutputStream(noteFile);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -71,9 +67,7 @@ public class NoteFileManager {
 
     public String[] readFile(String pathName, String fileName) {
         if (isExternalStorageReadable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Создаем файл в указанной папке
             File noteFile = createFile(pathName, fileName);
-            // Читаем объекты из файла
             try {
                 FileInputStream fis = new FileInputStream(noteFile);
                 ObjectInputStream ois = new ObjectInputStream(fis);

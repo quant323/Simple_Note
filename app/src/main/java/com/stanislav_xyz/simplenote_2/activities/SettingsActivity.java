@@ -2,6 +2,7 @@ package com.stanislav_xyz.simplenote_2.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.stanislav_xyz.simplenote_2.R;
+import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
@@ -20,7 +22,6 @@ import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
@@ -38,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private NoteFileManager mFileManager;
 
+    private NoteViewModel mNoteViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +48,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Нажатие на стрелку "назад" на Toolbar
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +63,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mNoteList = getIntent().getParcelableArrayListExtra(MainPresenter.EXTRA_NOTE_LIST);
 
         mFileManager = new NoteFileManager(this);
+
+        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
     }
 
     @Override
@@ -135,22 +139,25 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         return gson.fromJson(folders, type);
     }
 
-    // Приверяет, содержится ли уже такая папка в листе. Если нет - добавляет папку в хранилище.
-    // Папки считаются одниковыми, если равны их имена (см. метод equals() клааса Folder)
-    private void mergeFolders(List<Folder> existingFolders, List<Folder> importedFolders) {
-        for (int i = 0; i < importedFolders.size(); i++) {
-            if (!existingFolders.contains(importedFolders.get(i))) {
-                Log.d(TAG, "missing folder - " + importedFolders.get(i).getName());
-            }
-        }
-    }
 
     // Приверяет, содержится ли уже такая заметка в листе. Если нет - добавляет заметку в хранилище.
     // Заметки считаются одниковыми, если равны их id (см. метод equals() клааса Note)
     private void mergeNotes(List<Note> existingNotes, List<Note> importedNotes) {
-        for (int i = 0; i < importedNotes.size(); i++) {
-            if (!existingNotes.contains(importedNotes.get(i))) {
-                Log.d(TAG, "missing note - " + importedNotes.get(i).getTitle());
+        for (Note note : importedNotes) {
+            if (!existingNotes.contains(note)) {
+                mNoteViewModel.insert(note);
+                Log.d(TAG, "missing note - " + note.getTitle());
+            }
+        }
+    }
+
+    // Приверяет, содержится ли уже такая папка в листе. Если нет - добавляет папку в хранилище.
+    // Папки считаются одниковыми, если равны их имена (см. метод equals() клааса Folder)
+    private void mergeFolders(List<Folder> existingFolders, List<Folder> importedFolders) {
+        for (Folder folder : importedFolders) {
+            if (!existingFolders.contains(folder)) {
+                mNoteViewModel.insertFolder(folder);
+                Log.d(TAG, "missing folder - " + folder.getName());
             }
         }
     }
