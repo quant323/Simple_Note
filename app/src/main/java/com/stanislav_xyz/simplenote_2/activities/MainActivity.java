@@ -1,13 +1,11 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -22,7 +20,6 @@ import com.stanislav_xyz.simplenote_2.model.Note;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;

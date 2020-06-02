@@ -273,8 +273,6 @@ public class MainPresenter {
 
     private void startSettingsActivity() {
         Intent intent = new Intent(mActivity, SettingsActivity.class);
-        intent.putParcelableArrayListExtra(EXTRA_FOLDER_LIST, (ArrayList<Folder>) mFolderList);
-        intent.putParcelableArrayListExtra(EXTRA_NOTE_LIST, (ArrayList<Note>) mNoteList);
         mActivity.startActivity(intent);
     }
 

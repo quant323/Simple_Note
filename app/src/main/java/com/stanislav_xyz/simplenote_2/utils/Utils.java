@@ -70,6 +70,7 @@ public class Utils {
         Toast.makeText(context, mesId, Toast.LENGTH_SHORT).show();
     }
 
+    // Создает EditText с параметрами
     public static EditText createEditText(Context context, String text, String hint) {
         EditText newEditText = new EditText(context);
         newEditText.setLayoutParams(new LinearLayout.LayoutParams

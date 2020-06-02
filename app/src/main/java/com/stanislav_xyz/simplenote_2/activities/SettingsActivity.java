@@ -3,6 +3,7 @@ package com.stanislav_xyz.simplenote_2.activities;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
@@ -17,7 +18,6 @@ import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
-import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
 import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
@@ -33,8 +33,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public static final String MIME_TEXT = "txt";
     public static final String MIME_FILE = "bac";
-    public static final String EXTRA_FOLDERS = "extra_folders";
-    public static final String EXTRA_NOTES = "extra_notes";
 
     private List<Folder> mFolderList;
     private List<Note> mNoteList;
@@ -61,11 +59,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.settings_import_item).setOnClickListener(this);
         findViewById(R.id.settings_export_to_text).setOnClickListener(this);
 
-        mFolderList = getIntent().getParcelableArrayListExtra(MainPresenter.EXTRA_FOLDER_LIST);
-        mNoteList = getIntent().getParcelableArrayListExtra(MainPresenter.EXTRA_NOTE_LIST);
-
         mFileManager = new NoteFileManager(this);
         mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        mFolderList = mNoteViewModel.getAllFolders();
+        mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                mNoteList = notes;
+            }
+        });
     }
 
     @Override
@@ -122,12 +124,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             importedFolders = restoreFoldersFromString(data[1]);
             uniqueNotes = mergeNotes(mNoteList, importedNotes);
             uniqueFolders = mergeFolders(mFolderList, importedFolders);
-//            createSimpleDialog(getString(R.string.d_notes_imported_title),
-//                    getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
-//                    .show();
-            createSimpleDialog(getString(R.string.d_import_failed_title), null).show();
+            createSimpleDialog(getString(R.string.d_notes_imported_title),
+                    getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
+                    .show();
         } else createSimpleDialog(getString(R.string.d_import_failed_title), null).show();
- //           Utils.showToast(this, R.string.mes_import_failed);
     }
 
     // Работа с Gson
