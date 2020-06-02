@@ -102,8 +102,8 @@ public class MainPresenter {
     }
 
     public void onMenuRenamePressed() {
-        final EditText newFolderName_ET = Utils.createEditText(mActivity);
-        newFolderName_ET.setText(mCurFolder.getName());
+        final EditText newFolderName_ET = Utils.createEditText(mActivity,
+                mCurFolder.getName(), null);
         new AlertDialog.Builder(mActivity)
                 .setMessage(R.string.action_rename_folder)
                 .setView(newFolderName_ET)
@@ -128,8 +128,7 @@ public class MainPresenter {
                                     mNoteViewModel.deleteNote(note);
                             mMainInterface.showSnack(R.string.mes_bin_is_empty);
                         }
-                    })
-                    .setNegativeButton(R.string.cancel, null)
+                    }).setNegativeButton(R.string.cancel, null)
                     .show();
         } else mMainInterface.showSnack(R.string.mes_bin_is_empty);
     }
@@ -150,8 +149,7 @@ public class MainPresenter {
                            mNoteViewModel.update(note);
                            mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
                        }
-                   })
-                   .setNegativeButton(R.string.cancel, null)
+                   }).setNegativeButton(R.string.cancel, null)
                    .show();
         } else {
             mNoteViewModel.deleteNote(note);
@@ -187,8 +185,8 @@ public class MainPresenter {
     }
 
     public void onNavAddFolderPressed() {
-        final EditText newFolderName_ET = Utils.createEditText(mActivity);
-        newFolderName_ET.setHint(R.string.d_create_folder_hint);
+        final EditText newFolderName_ET = Utils.createEditText(mActivity, null,
+                mActivity.getString(R.string.d_create_folder_hint));
         new AlertDialog.Builder(mActivity)
                 .setMessage(R.string.action_rename_folder)
                 .setView(newFolderName_ET)

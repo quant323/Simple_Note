@@ -5,14 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.stanislav_xyz.simplenote_2.R;
@@ -67,7 +65,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mNoteList = getIntent().getParcelableArrayListExtra(MainPresenter.EXTRA_NOTE_LIST);
 
         mFileManager = new NoteFileManager(this);
-
         mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
     }
 
@@ -90,14 +87,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     // Экспортирует заметки в текстовые файлы
     private void exportNotesToText() {
+        String folderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER).toString();
         for (Folder folder : mFolderList) {
-            String path = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + folder.getName();
+            String path = folderPath + "/" + folder.getName();
             List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
             for(Note note : notesInFolder)
                 mFileManager.writeTextFile(path, note.getTitle() + "." + MIME_TEXT, note.getBody());
         }
-        Snackbar.make(findViewById(R.id.coordinator_settings),
-                R.string.mes_export_finished, Snackbar.LENGTH_LONG).show();
+        createSimpleDialog(getString(R.string.d_export_finished_title),
+                getString(R.string.d_export_notes_as_text_path, folderPath))
+                .show();
     }
 
     private void exportNotesToFile() {
@@ -106,8 +105,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         String foldersAsString = convertListToString(mFolderList);
         mFileManager.writeFile(path, BACKUP_FILE_NAME + "." + MIME_FILE,
                 notesAsString, foldersAsString);
-        Snackbar.make(findViewById(R.id.coordinator_settings),
-                R.string.mes_export_finished, Snackbar.LENGTH_LONG).show();
+        createSimpleDialog(getString(R.string.d_export_finished_title),
+                getString(R.string.d_export_backup_path, path))
+                .show();
     }
 
     private void importNotesFromFile() {
@@ -122,12 +122,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             importedFolders = restoreFoldersFromString(data[1]);
             uniqueNotes = mergeNotes(mNoteList, importedNotes);
             uniqueFolders = mergeFolders(mFolderList, importedFolders);
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.d_notes_imported_title)
-                    .setMessage(getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
-        } else Utils.showToast(this, R.string.mes_import_failed);
+//            createSimpleDialog(getString(R.string.d_notes_imported_title),
+//                    getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
+//                    .show();
+            createSimpleDialog(getString(R.string.d_import_failed_title), null).show();
+        } else createSimpleDialog(getString(R.string.d_import_failed_title), null).show();
+ //           Utils.showToast(this, R.string.mes_import_failed);
     }
 
     // Работа с Gson
@@ -179,6 +179,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         }
         return uniqueFolders;
+    }
+
+    private AlertDialog.Builder createSimpleDialog(String title, String message) {
+        return new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, null);
     }
 
 }

@@ -70,10 +70,12 @@ public class Utils {
         Toast.makeText(context, mesId, Toast.LENGTH_SHORT).show();
     }
 
-    public static EditText createEditText(Context context) {
+    public static EditText createEditText(Context context, String text, String hint) {
         EditText newEditText = new EditText(context);
         newEditText.setLayoutParams(new LinearLayout.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        newEditText.setText(text);
+        newEditText.setHint(hint);
         newEditText.setSingleLine(true);
         return newEditText;
     }
