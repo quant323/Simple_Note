@@ -48,14 +48,17 @@ public class NoteFileManager {
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
     }
 
-    public void writeFile(String pathName, String fileName, String notes, String folders) {
+    public void writeFile(String pathName, String fileName, Object... objects) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             File noteFile = createFile(pathName, fileName);
             try {
                 FileOutputStream fos = new FileOutputStream(noteFile);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(notes);
-                oos.writeObject(folders);
+                // Сперва записывем число, равное количеству записываемых объектов
+                oos.writeInt(objects.length);
+                for (Object object : objects) {
+                    oos.writeObject(object);
+                }
                 fos.close();
                 oos.close();
                 Utils.showToast(mContext, "File Saved!");
@@ -66,18 +69,21 @@ public class NoteFileManager {
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
     }
 
-    public String[] readFile(String pathName, String fileName) {
+    public Object[] readFile(String pathName, String fileName) {
         if (isExternalStorageReadable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             File noteFile = createFile(pathName, fileName);
             try {
                 FileInputStream fis = new FileInputStream(noteFile);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                String notes = (String) ois.readObject();
-                String folders = (String) ois.readObject();
+                // Читаем из файла int, в котором записано число находящихся в файле объектов
+                int arrayLength = ois.readInt();
+                Object[] objects = new Object[arrayLength];
+                for (int i = 0; i < arrayLength; i++)
+                    objects[i] = ois.readObject();
                 fis.close();
                 ois.close();
                 Utils.showToast(mContext, "File Loaded!");
-                return new String[] {notes, folders};
+                return objects;
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

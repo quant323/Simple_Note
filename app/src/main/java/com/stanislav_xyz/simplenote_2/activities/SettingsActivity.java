@@ -114,14 +114,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private void importNotesFromFile() {
         String path = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
-        String[] data = mFileManager.readFile(path, BACKUP_FILE_NAME + "." + MIME_FILE);
+        Object[] data = mFileManager.readFile(path, BACKUP_FILE_NAME + "." + MIME_FILE);
         List<Note> importedNotes;
         List<Folder> importedFolders;
         int uniqueNotes;
         int uniqueFolders;
         if (data != null) {
-            importedNotes = restoreNotesFromString(data[0]);
-            importedFolders = restoreFoldersFromString(data[1]);
+//            for (int i = 0; i < data.length; i++) {
+//                if (restoreNotesFromString((String) data[i]) instanceof )
+//            }
+//
+
+
+            importedNotes = restoreNotesFromString((String) data[0]);
+            importedFolders = restoreFoldersFromString((String)data[1]);
             uniqueNotes = mergeNotes(mNoteList, importedNotes);
             uniqueFolders = mergeFolders(mFolderList, importedFolders);
             createSimpleDialog(getString(R.string.d_notes_imported_title),
