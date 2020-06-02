@@ -1,15 +1,14 @@
 package com.stanislav_xyz.simplenote_2.presenters;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.widget.EditText;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.activities.NoteActivity;
 import com.stanislav_xyz.simplenote_2.activities.SettingsActivity;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
-import com.stanislav_xyz.simplenote_2.dialogs.TextAndTitleDialog;
-import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
-import com.stanislav_xyz.simplenote_2.dialogs.MoveNoteDialog;
-import com.stanislav_xyz.simplenote_2.dialogs.NewFolderDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
@@ -103,28 +102,35 @@ public class MainPresenter {
     }
 
     public void onMenuRenamePressed() {
-        String message = mActivity.getString(R.string.action_rename_folder);
-
-        new NewFolderDialog(message, mCurFolder.getName(),
-                new NewFolderDialog.FolderDialogListener() {
+        final EditText newFolderName_ET = Utils.createEditText(mActivity);
+        newFolderName_ET.setText(mCurFolder.getName());
+        new AlertDialog.Builder(mActivity)
+                .setMessage(R.string.action_rename_folder)
+                .setView(newFolderName_ET)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onFolderConfirm(String name) {
-                        renameFolder(name, mCurFolder);
+                    public void onClick(DialogInterface dialog, int which) {
+                        renameFolder(newFolderName_ET.getText().toString(), mCurFolder);
                     }
-                }).show(mActivity.getSupportFragmentManager(), null);
+                }).show();
     }
 
     public void onMenuCleanBinPressed() {
         if (mNotesInCurFolder.size() > 0) {
-            new DeleteDialog(DeleteDialog.ACTION_EMPTY_BIN, new DeleteDialog.DeleteDialogListener() {
-                @Override
-                public void onDeleteConfirm() {
-                    if (mCurFolder == mBinFolder)
-                        for (Note note : mNotesInCurFolder)
-                            mNoteViewModel.deleteNote(note);
-                    mMainInterface.showSnack(R.string.mes_bin_is_empty);
-                }
-            }).show(mActivity.getSupportFragmentManager(), null);
+            new AlertDialog.Builder(mActivity)
+                    .setTitle(R.string.d_empty_title)
+                    .setMessage(R.string.d_empty_message)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (mCurFolder == mBinFolder)
+                                for (Note note : mNotesInCurFolder)
+                                    mNoteViewModel.deleteNote(note);
+                            mMainInterface.showSnack(R.string.mes_bin_is_empty);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         } else mMainInterface.showSnack(R.string.mes_bin_is_empty);
     }
 
@@ -134,15 +140,19 @@ public class MainPresenter {
 
     public void onContextDelPressed(final Note note) {
         if (mCurFolder != mBinFolder) {
-            new DeleteDialog( DeleteDialog.ACTION_DELETE_NOTE,
-                    new DeleteDialog.DeleteDialogListener() {
-                        @Override
-                        public void onDeleteConfirm() {
-                            note.setFolderName(mBinFolder.getName());
-                            mNoteViewModel.update(note);
-                            mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
-                        }
-                    }).show(mActivity.getSupportFragmentManager(), null);
+           new AlertDialog.Builder(mActivity)
+                   .setTitle(R.string.d_delete_title)
+                   .setMessage(R.string.d_delete_message)
+                   .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           note.setFolderName(mBinFolder.getName());
+                           mNoteViewModel.update(note);
+                           mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
+                       }
+                   })
+                   .setNegativeButton(R.string.cancel, null)
+                   .show();
         } else {
             mNoteViewModel.deleteNote(note);
             mMainInterface.showSnack(R.string.mes_note_deleted);
@@ -150,13 +160,13 @@ public class MainPresenter {
     }
 
     public void onContextMovePressed(final Note note) {
-        new MoveNoteDialog(Utils.getFolderNames(mFolderList),
-                new MoveNoteDialog.MoveDialogListener() {
+        new AlertDialog.Builder(mActivity).setTitle(R.string.action_context_move)
+                .setItems(Utils.getFolderNames(mFolderList), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onMoveConfirmed(int folderIndex) {
-                        moveNote(folderIndex, note);
+                    public void onClick(DialogInterface dialog, int which) {
+                        moveNote(which, note);
                     }
-                }).show(mActivity.getSupportFragmentManager(), null);
+                }).show();
     }
 
     public void onNavBinPressed() {
@@ -169,19 +179,26 @@ public class MainPresenter {
     }
 
     public void onNavAboutPressed() {
-        new TextAndTitleDialog(mActivity.getString(R.string.d_about_title),
-                mActivity.getString(R.string.d_about_title)).show(mActivity.getSupportFragmentManager(), null);
+        new AlertDialog.Builder(mActivity)
+                .setTitle(R.string.nav_about)
+                .setMessage(R.string.d_about_message)
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     public void onNavAddFolderPressed() {
-        String message = mActivity.getString(R.string.nav_add_new_folder);
-        new NewFolderDialog(message, new NewFolderDialog.FolderDialogListener() {
-            @Override
-            public void onFolderConfirm(String name) {
-                createNewFolder(name);
-                mMainInterface.setItemsVisibility(true);
-            }
-        }).show(mActivity.getSupportFragmentManager(), null);
+        final EditText newFolderName_ET = Utils.createEditText(mActivity);
+        newFolderName_ET.setHint(R.string.d_create_folder_hint);
+        new AlertDialog.Builder(mActivity)
+                .setMessage(R.string.action_rename_folder)
+                .setView(newFolderName_ET)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        createNewFolder(newFolderName_ET.getText().toString());
+                        mMainInterface.setItemsVisibility(true);
+                    }
+                }).show();
     }
 
     public void onNavNormalFolderPressed(int id) {

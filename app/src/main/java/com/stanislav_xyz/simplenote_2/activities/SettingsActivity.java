@@ -1,5 +1,6 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
@@ -16,7 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
-import com.stanislav_xyz.simplenote_2.dialogs.TextAndTitleDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
@@ -24,7 +24,6 @@ import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
@@ -123,9 +122,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             importedFolders = restoreFoldersFromString(data[1]);
             uniqueNotes = mergeNotes(mNoteList, importedNotes);
             uniqueFolders = mergeFolders(mFolderList, importedFolders);
-            new TextAndTitleDialog(getString(R.string.d_notes_imported_title),
-                    getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
-                    .show(getSupportFragmentManager(), null);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.d_notes_imported_title)
+                    .setMessage(getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
         } else Utils.showToast(this, R.string.mes_import_failed);
     }
 

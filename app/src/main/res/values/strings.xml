@@ -34,7 +34,7 @@
     <string name="d_delete_message">Delete Note?</string>
     <string name="d_empty_title">Empty Bin</string>
     <string name="d_empty_message">Delete all notes from Bin?</string>
-    <string name="d_about_title">Simple Note v0.1</string>
+    <string name="d_about_message">Simple Note v1.0</string>
     <string name="d_notes_imported_title">Import Finished</string>
     <string name="d_notes_folders_imported">%d notes imported\n%d folders imported</string>
 

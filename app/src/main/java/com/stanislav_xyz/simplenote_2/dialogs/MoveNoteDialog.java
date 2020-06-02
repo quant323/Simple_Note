@@ -22,10 +22,6 @@ public class MoveNoteDialog extends AppCompatDialogFragment {
         this.dialogListener = dialogListener;
     }
 
-//    public static MoveNoteDialog create(String[] folderNames, MoveDialogListener dialogListener) {
-//
-//    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

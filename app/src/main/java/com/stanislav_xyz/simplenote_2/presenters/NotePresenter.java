@@ -1,10 +1,11 @@
 package com.stanislav_xyz.simplenote_2.presenters;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
-import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
@@ -55,16 +56,19 @@ public class NotePresenter {
     public void onMenuDelPressed() {
         if (mFolder.getId() != MainPresenter.getBinFolder().getId()) {
             if (mNote != null) {
-                new DeleteDialog(DeleteDialog.ACTION_DELETE_NOTE,
-                        new DeleteDialog.DeleteDialogListener() {
+                new AlertDialog.Builder(mActivity)
+                        .setTitle(R.string.d_delete_title)
+                        .setMessage(R.string.d_delete_message)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onDeleteConfirm() {
+                            public void onClick(DialogInterface dialog, int which) {
                                 mNote.setFolderName(MainPresenter.getBinFolder().getName());
                                 mNoteViewModel.update(mNote);
                                 Utils.showToast(mActivity, R.string.mes_note_moved_to_bin);
                                 mActivity.finish();
                             }
-                        }).show(mActivity.getSupportFragmentManager(), null);
+                        }).setNegativeButton(R.string.cancel, null)
+                        .show();
             }
         } else {
             mNoteViewModel.deleteNote(mNote);

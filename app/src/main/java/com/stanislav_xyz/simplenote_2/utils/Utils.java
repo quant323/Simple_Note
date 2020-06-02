@@ -1,6 +1,9 @@
 package com.stanislav_xyz.simplenote_2.utils;
 
 import android.content.Context;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
@@ -65,6 +68,14 @@ public class Utils {
 
     public static void showToast(Context context, int mesId) {
         Toast.makeText(context, mesId, Toast.LENGTH_SHORT).show();
+    }
+
+    public static EditText createEditText(Context context) {
+        EditText newEditText = new EditText(context);
+        newEditText.setLayoutParams(new LinearLayout.LayoutParams
+                (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        newEditText.setSingleLine(true);
+        return newEditText;
     }
 
 }
