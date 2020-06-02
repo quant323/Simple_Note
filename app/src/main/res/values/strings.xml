@@ -35,6 +35,8 @@
     <string name="d_empty_title">Empty Bin</string>
     <string name="d_empty_message">Delete all notes from Bin?</string>
     <string name="d_about_title">Simple Note v0.1</string>
+    <string name="d_notes_imported_title">Import Finished</string>
+    <string name="d_notes_folders_imported">%d notes imported\n%d folders imported</string>
 
     <string name="mes_folder_is_not_empty">Folder is not Empty</string>
     <string name="mes_note_moved_to_bin">Note moved to Bin!</string>
@@ -44,6 +46,7 @@
     <string name="mes_not_yet_implemented">Not yet implemented :(</string>
     <string name="mes_export_finished">Export Finished!</string>
     <string name="mes_import_finished">Import Finished!</string>
+    <string name="mes_import_failed">Import Failed!</string>
     <string name="mes_permission_denied">Permission denied!</string>
 
     <string name="hint_note_text">Enter your note here…</string>

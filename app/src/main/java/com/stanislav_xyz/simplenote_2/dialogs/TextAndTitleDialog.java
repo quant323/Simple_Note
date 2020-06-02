@@ -1,7 +1,6 @@
 package com.stanislav_xyz.simplenote_2.dialogs;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 
 import com.stanislav_xyz.simplenote_2.R;
@@ -11,21 +10,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-public class NotImplDialog extends AppCompatDialogFragment {
+public class TextAndTitleDialog extends AppCompatDialogFragment {
 
-    private Context context;
+    private String title;
+    private String message;
 
-    public NotImplDialog(Context context) {
-        this.context = context;
+    public TextAndTitleDialog(String  title, String message) {
+        this.title = title;
+        this.message = message;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new AlertDialog.Builder(context)
-                .setTitle(R.string.mes_not_yet_implemented)
+        return new AlertDialog.Builder(requireContext())
+                .setTitle(title)
+                .setMessage(message)
                 .setPositiveButton(R.string.ok, null)
                 .create();
     }
-
 }

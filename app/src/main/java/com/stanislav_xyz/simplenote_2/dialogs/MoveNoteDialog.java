@@ -1,7 +1,6 @@
 package com.stanislav_xyz.simplenote_2.dialogs;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -14,21 +13,23 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class MoveNoteDialog extends AppCompatDialogFragment {
 
-    private Context context;
     private String[] folderNames;
     private MoveDialogListener dialogListener;
 
     // Конструктор
-    public MoveNoteDialog(Context context, String[] folderNames, MoveDialogListener dialogListener) {
-        this.context = context;
+    public MoveNoteDialog(String[] folderNames, MoveDialogListener dialogListener) {
         this.folderNames = folderNames;
         this.dialogListener = dialogListener;
     }
 
+//    public static MoveNoteDialog create(String[] folderNames, MoveDialogListener dialogListener) {
+//
+//    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.action_context_move)
                 .setItems(folderNames, new DialogInterface.OnClickListener() {
                     @Override

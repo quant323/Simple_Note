@@ -2,7 +2,6 @@ package com.stanislav_xyz.simplenote_2.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -17,14 +16,12 @@ public class DeleteDialog extends AppCompatDialogFragment {
     public static final int ACTION_DELETE_NOTE = 0;
     public static final int ACTION_EMPTY_BIN = 1;
 
-    private Context context;
     private DeleteDialogListener dialogListener;
     private int titleId;
     private int messageId;
 
     // Конструктор
-    public DeleteDialog(Context context, int action, DeleteDialogListener dialogListener) {
-        this.context = context;
+    public DeleteDialog(int action, DeleteDialogListener dialogListener) {
         this.dialogListener = dialogListener;
         setAction(action);
     }
@@ -45,7 +42,7 @@ public class DeleteDialog extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
-        return new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(requireContext())
                 .setTitle(titleId)
                 .setMessage(messageId)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

@@ -1,7 +1,6 @@
 package com.stanislav_xyz.simplenote_2.dialogs;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 
 import com.stanislav_xyz.simplenote_2.R;
@@ -11,21 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-public class AboutDialog extends AppCompatDialogFragment {
-
-    private Context context;
-
-    public AboutDialog(Context context) {
-        this.context = context;
-    }
+public class NotImplementedDialog extends AppCompatDialogFragment {
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return new AlertDialog.Builder(context)
-                .setTitle(R.string.nav_about)
-                .setMessage(R.string.d_about_title)
+        return new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.mes_not_yet_implemented)
                 .setPositiveButton(R.string.ok, null)
                 .create();
     }
+
 }

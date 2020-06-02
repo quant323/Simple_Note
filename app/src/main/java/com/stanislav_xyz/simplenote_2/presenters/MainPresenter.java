@@ -6,7 +6,7 @@ import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.activities.NoteActivity;
 import com.stanislav_xyz.simplenote_2.activities.SettingsActivity;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
-import com.stanislav_xyz.simplenote_2.dialogs.AboutDialog;
+import com.stanislav_xyz.simplenote_2.dialogs.TextAndTitleDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.DeleteDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.MoveNoteDialog;
 import com.stanislav_xyz.simplenote_2.dialogs.NewFolderDialog;
@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders;
 public class MainPresenter {
 
     private static final String TAG = "myTag";
+
     public static final int INITIAL_FOLDER_ID = 0;
     public static final String EXTRA_FOLDER = "NoteActivity.EXTRA_FOLDER";
     public static final String EXTRA_NOTE = "NoteActivity.EXTRA_NOTE";
@@ -104,7 +105,7 @@ public class MainPresenter {
     public void onMenuRenamePressed() {
         String message = mActivity.getString(R.string.action_rename_folder);
 
-        new NewFolderDialog(mActivity, message, mCurFolder.getName(),
+        new NewFolderDialog(message, mCurFolder.getName(),
                 new NewFolderDialog.FolderDialogListener() {
                     @Override
                     public void onFolderConfirm(String name) {
@@ -115,7 +116,7 @@ public class MainPresenter {
 
     public void onMenuCleanBinPressed() {
         if (mNotesInCurFolder.size() > 0) {
-            new DeleteDialog(mActivity, DeleteDialog.ACTION_EMPTY_BIN, new DeleteDialog.DeleteDialogListener() {
+            new DeleteDialog(DeleteDialog.ACTION_EMPTY_BIN, new DeleteDialog.DeleteDialogListener() {
                 @Override
                 public void onDeleteConfirm() {
                     if (mCurFolder == mBinFolder)
@@ -133,7 +134,7 @@ public class MainPresenter {
 
     public void onContextDelPressed(final Note note) {
         if (mCurFolder != mBinFolder) {
-            new DeleteDialog(mActivity, DeleteDialog.ACTION_DELETE_NOTE,
+            new DeleteDialog( DeleteDialog.ACTION_DELETE_NOTE,
                     new DeleteDialog.DeleteDialogListener() {
                         @Override
                         public void onDeleteConfirm() {
@@ -149,7 +150,7 @@ public class MainPresenter {
     }
 
     public void onContextMovePressed(final Note note) {
-        new MoveNoteDialog(mActivity, Utils.getFolderNames(mFolderList),
+        new MoveNoteDialog(Utils.getFolderNames(mFolderList),
                 new MoveNoteDialog.MoveDialogListener() {
                     @Override
                     public void onMoveConfirmed(int folderIndex) {
@@ -168,12 +169,13 @@ public class MainPresenter {
     }
 
     public void onNavAboutPressed() {
-        new AboutDialog(mActivity).show(mActivity.getSupportFragmentManager(), null);
+        new TextAndTitleDialog(mActivity.getString(R.string.d_about_title),
+                mActivity.getString(R.string.d_about_title)).show(mActivity.getSupportFragmentManager(), null);
     }
 
     public void onNavAddFolderPressed() {
         String message = mActivity.getString(R.string.nav_add_new_folder);
-        new NewFolderDialog(mActivity, message, new NewFolderDialog.FolderDialogListener() {
+        new NewFolderDialog(message, new NewFolderDialog.FolderDialogListener() {
             @Override
             public void onFolderConfirm(String name) {
                 createNewFolder(name);

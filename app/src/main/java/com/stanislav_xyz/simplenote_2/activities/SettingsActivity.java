@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
+import com.stanislav_xyz.simplenote_2.dialogs.TextAndTitleDialog;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
@@ -22,6 +24,7 @@ import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
@@ -33,6 +36,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public static final String MIME_TEXT = "txt";
     public static final String MIME_FILE = "bac";
+    public static final String EXTRA_FOLDERS = "extra_folders";
+    public static final String EXTRA_NOTES = "extra_notes";
 
     private List<Folder> mFolderList;
     private List<Note> mNoteList;
@@ -111,14 +116,17 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         String[] data = mFileManager.readFile(path, BACKUP_FILE_NAME + "." + MIME_FILE);
         List<Note> importedNotes;
         List<Folder> importedFolders;
+        int uniqueNotes;
+        int uniqueFolders;
         if (data != null) {
             importedNotes = restoreNotesFromString(data[0]);
             importedFolders = restoreFoldersFromString(data[1]);
-            mergeNotes(mNoteList, importedNotes);
-            mergeFolders(mFolderList, importedFolders);
-            Snackbar.make(findViewById(R.id.coordinator_settings),
-                    R.string.mes_import_finished, Snackbar.LENGTH_LONG).show();
-        } else Utils.showToast(this, "Import failed");
+            uniqueNotes = mergeNotes(mNoteList, importedNotes);
+            uniqueFolders = mergeFolders(mFolderList, importedFolders);
+            new TextAndTitleDialog(getString(R.string.d_notes_imported_title),
+                    getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
+                    .show(getSupportFragmentManager(), null);
+        } else Utils.showToast(this, R.string.mes_import_failed);
     }
 
     // Работа с Gson
@@ -142,24 +150,34 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     // Приверяет, содержится ли уже такая заметка в листе. Если нет - добавляет заметку в хранилище.
     // Заметки считаются одниковыми, если равны их id (см. метод equals() клааса Note)
-    private void mergeNotes(List<Note> existingNotes, List<Note> importedNotes) {
+    // Возвращаемое значение - кол-во уникальных заметок
+    private int mergeNotes(List<Note> existingNotes, List<Note> importedNotes) {
+        int uniqueNotes = 0;
         for (Note note : importedNotes) {
             if (!existingNotes.contains(note)) {
                 mNoteViewModel.insert(note);
+                uniqueNotes++;
                 Log.d(TAG, "missing note - " + note.getTitle());
             }
         }
+        return uniqueNotes;
     }
 
     // Приверяет, содержится ли уже такая папка в листе. Если нет - добавляет папку в хранилище.
-    // Папки считаются одниковыми, если равны их имена (см. метод equals() клааса Folder)
-    private void mergeFolders(List<Folder> existingFolders, List<Folder> importedFolders) {
+    // Папки считаются одниковыми, если равны их имена (см. метод equals() клааса Folder).
+    // Возвращаемое значение - кол-во уникальных папок
+    private int mergeFolders(List<Folder> existingFolders, List<Folder> importedFolders) {
+        int uniqueFolders = 0;
         for (Folder folder : importedFolders) {
             if (!existingFolders.contains(folder)) {
+                Folder lastFolder = existingFolders.get(existingFolders.size() - 1);
+                folder.setId(lastFolder.getId() + 1);
                 mNoteViewModel.insertFolder(folder);
+                uniqueFolders++;
                 Log.d(TAG, "missing folder - " + folder.getName());
             }
         }
+        return uniqueFolders;
     }
 
 }

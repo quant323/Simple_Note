@@ -55,7 +55,7 @@ public class NotePresenter {
     public void onMenuDelPressed() {
         if (mFolder.getId() != MainPresenter.getBinFolder().getId()) {
             if (mNote != null) {
-                new DeleteDialog(mActivity, DeleteDialog.ACTION_DELETE_NOTE,
+                new DeleteDialog(DeleteDialog.ACTION_DELETE_NOTE,
                         new DeleteDialog.DeleteDialogListener() {
                             @Override
                             public void onDeleteConfirm() {
