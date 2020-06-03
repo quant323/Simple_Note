@@ -172,7 +172,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     .show();
     }
 
-
     // Сохраняет заметки и папки в файл
     private void createBackupFile(File file, String folderPath) {
         String notesAsString = convertListToString(mNoteList);

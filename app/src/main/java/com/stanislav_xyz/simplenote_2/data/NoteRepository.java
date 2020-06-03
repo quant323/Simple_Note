@@ -16,7 +16,6 @@ class NoteRepository {
     private WorkWithSharedPref mSharedPref;
     private List<Folder> mAllFolders;
 
-
     // Конструктор
     NoteRepository(Application application) {
         NoteRoomDatabase db = NoteRoomDatabase.getDatabase(application);

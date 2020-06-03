@@ -27,8 +27,6 @@ public class MainPresenter {
     public static final int INITIAL_FOLDER_ID = 0;
     public static final String EXTRA_FOLDER = "NoteActivity.EXTRA_FOLDER";
     public static final String EXTRA_NOTE = "NoteActivity.EXTRA_NOTE";
-    public static final String EXTRA_FOLDER_LIST = "SettingsActivity.EXTRA_FOLDER_LIST";
-    public static final String EXTRA_NOTE_LIST = "SettingsActivity.EXTRA_NOTE_LIST";
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
