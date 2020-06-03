@@ -30,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private static final String TAG = "myTag";
     private static final String MAIN_FOLDER = "Simple Note";
-    private static final String BACKUP_FILE_NAME = "note_backup1";
+    private static final String BACKUP_FILE_NAME = "note_backup1_spb";
     private static final String BACKUP_FOLDER = "backup";
 
     public static final String MIME_TEXT = "txt";
@@ -104,40 +104,32 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void exportNotesToFile() {
-        String path = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
-        String notesAsString = convertListToString(mNoteList);
-        String foldersAsString = convertListToString(mFolderList);
-
-        File filePath = new File(path + "/" + BACKUP_FILE_NAME + "." + MIME_FILE);
-        if (filePath.exists()) {
+        final String folderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
+        final File file = new File(folderPath + "/" + BACKUP_FILE_NAME + "." + MIME_FILE);
+        if (file.exists()) {
             new AlertDialog.Builder(this)
-                    .setTitle("Attention!")
-                    .setMessage("Backup file already exists.\nDo you want to overwrite it?")
+                    .setTitle(R.string.d_attention_title)
+                    .setMessage(R.string.d_attention_message)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            createBackupFile(file, folderPath);
                         }
-                    })
-                    .setNegativeButton(R.string.cancel, null)
+                    }).setNegativeButton(R.string.cancel, null)
                     .show();
         } else {
-            mFileManager.writeFile(path, BACKUP_FILE_NAME + "." + MIME_FILE,
-                    notesAsString, foldersAsString);
-            createSimpleDialog(getString(R.string.d_export_finished_title),
-                    getString(R.string.d_export_backup_path, path))
-                    .show();
+            new File(folderPath).mkdirs();
+            createBackupFile(file, folderPath);
         }
     }
 
     private void importNotesFromFile() {
         String path = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
-        Object[] data = mFileManager.readFile(path, BACKUP_FILE_NAME + "." + MIME_FILE);
+        Object[] data = mFileManager.readObjectsFromFile(path, BACKUP_FILE_NAME + "." + MIME_FILE);
         List<Note> importedNotes;
         List<Folder> importedFolders;
         int uniqueNotes;
         int uniqueFolders;
-
         if (data != null) {
             importedNotes = restoreNotesFromString((String) data[0]);
             importedFolders = restoreFoldersFromString((String)data[1]);
@@ -167,6 +159,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         return gson.fromJson(folders, type);
     }
 
+    // Сохраняет заметки и папки в файл
+    private void createBackupFile(File file, String folderPath) {
+        String notesAsString = convertListToString(mNoteList);
+        String foldersAsString = convertListToString(mFolderList);
+        mFileManager.writeObjectsToFile(file, notesAsString, foldersAsString);
+        createSimpleDialog(getString(R.string.d_export_finished_title),
+                getString(R.string.d_export_backup_path, folderPath))
+                .show();
+    }
 
     // Приверяет, содержится ли уже такая заметка в листе. Если нет - добавляет заметку в хранилище.
     // Заметки считаются одниковыми, если равны их id (см. метод equals() клааса Note)

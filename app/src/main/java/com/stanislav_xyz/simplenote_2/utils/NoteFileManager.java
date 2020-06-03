@@ -44,11 +44,11 @@ public class NoteFileManager {
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
     }
 
-    public void writeFile(String pathName, String fileName, Object... objects) {
+    public void writeObjectsToFile(File file, Object... objects) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            File noteFile = createFile(pathName, fileName);
+//            File noteFile = createFile(pathName, fileName);
             try {
-                FileOutputStream fos = new FileOutputStream(noteFile);
+                FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 // Сперва записывем число, равное количеству записываемых объектов
                 oos.writeInt(objects.length);
@@ -58,14 +58,14 @@ public class NoteFileManager {
                 fos.close();
                 oos.close();
                 Utils.showToast(mContext, "File Saved!");
-              scanFile(mContext, noteFile, SettingsActivity.MIME_FILE);
+              scanFile(mContext, file, SettingsActivity.MIME_FILE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
     }
 
-    public Object[] readFile(String pathName, String fileName) {
+    public Object[] readObjectsFromFile(String pathName, String fileName) {
         if (isExternalStorageReadable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             File noteFile = createFile(pathName, fileName);
             try {
