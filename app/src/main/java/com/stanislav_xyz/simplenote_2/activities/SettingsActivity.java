@@ -91,15 +91,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     // Экспортирует заметки в текстовые файлы
     private void exportNotesToText() {
-        String folderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER).toString();
+        File mainFolderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER);
+        if(!mainFolderPath.exists())
+            mainFolderPath.mkdirs();
         for (Folder folder : mFolderList) {
-            String path = folderPath + "/" + folder.getName();
+            File folderPath = new File(mainFolderPath + "/" + folder.getName());
+            folderPath.mkdirs();
             List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
-            for(Note note : notesInFolder)
-                mFileManager.writeTextFile(path, note.getTitle() + "." + MIME_TEXT, note.getBody());
+            for(Note note : notesInFolder) {
+                File file = new File(folderPath + "/" + note.getTitle() + "." + MIME_TEXT);
+                mFileManager.exportTextToFile(file, note.getBody());
+            }
         }
         createSimpleDialog(getString(R.string.d_export_finished_title),
-                getString(R.string.d_export_notes_as_text_path, folderPath))
+                getString(R.string.d_export_notes_as_text_path, mainFolderPath))
                 .show();
     }
 

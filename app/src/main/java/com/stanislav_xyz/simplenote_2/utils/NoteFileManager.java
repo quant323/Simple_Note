@@ -29,15 +29,14 @@ public class NoteFileManager {
         mContext = context;
     }
 
-    public void writeTextFile(String pathName, String fileName, String body) {
+    public void exportTextToFile(File file, String body) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            File noteFile = createFile(pathName, fileName);
             try {
-                FileOutputStream fos = new FileOutputStream(noteFile);
+                FileOutputStream fos = new FileOutputStream(file);
                 fos.write(body.getBytes());
                 fos.close();
                 Log.d(TAG, "File Saved!");
-                scanFile(mContext, noteFile, SettingsActivity.MIME_TEXT);
+                scanFile(mContext, file, SettingsActivity.MIME_TEXT);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,15 +83,6 @@ public class NoteFileManager {
             }
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
         return null;
-    }
-
-    private File createFile(String pathName, String fileName) {
-        File filePath = new File(pathName);
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-            Log.d(TAG, "Folder has been created!");
-        } else Log.d(TAG, "Folder already exists!");
-        return new File(filePath, fileName);
     }
 
     // Позволяет проводнику Windows находить созданный файл
