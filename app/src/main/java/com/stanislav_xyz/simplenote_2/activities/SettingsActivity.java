@@ -3,10 +3,14 @@ package com.stanislav_xyz.simplenote_2.activities;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -32,6 +36,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private static final String MAIN_FOLDER = "Simple Note";
     private static final String BACKUP_FILE_NAME = "note_backup1";
     private static final String BACKUP_FOLDER = "backup";
+
+    private static final int REQUEST_CODE = 1;
 
     public static final String MIME_TEXT = "txt";
     public static final String MIME_FILE = "bac";
@@ -91,21 +97,26 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     // Экспортирует заметки в текстовые файлы
     private void exportNotesToText() {
-        File mainFolderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER);
-        if(!mainFolderPath.exists())
-            mainFolderPath.mkdirs();
-        for (Folder folder : mFolderList) {
-            File folderPath = new File(mainFolderPath + "/" + folder.getName());
-            folderPath.mkdirs();
-            List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
-            for(Note note : notesInFolder) {
-                File file = new File(folderPath + "/" + note.getTitle() + "." + MIME_TEXT);
-                mFileManager.exportTextToFile(file, note.getBody());
+        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            File mainFolderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER);
+            if(!mainFolderPath.exists())
+                mainFolderPath.mkdirs();
+            for (Folder folder : mFolderList) {
+                File folderPath = new File(mainFolderPath + "/" + folder.getName());
+                folderPath.mkdirs();
+                List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
+                for(Note note : notesInFolder) {
+                    File file = new File(folderPath + "/" + note.getTitle() + "." + MIME_TEXT);
+                    mFileManager.exportTextToFile(file, note.getBody());
+                }
             }
+            createSimpleDialog(getString(R.string.d_export_finished_title),
+                    getString(R.string.d_export_notes_as_text_path, mainFolderPath))
+                    .show();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
-        createSimpleDialog(getString(R.string.d_export_finished_title),
-                getString(R.string.d_export_notes_as_text_path, mainFolderPath))
-                .show();
     }
 
     private void exportNotesToFile() {
@@ -215,5 +226,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, null);
     }
+
+
+    private boolean checkPermission(String permission) {
+        int check = ContextCompat.checkSelfPermission(this, permission);
+        return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
 
 }

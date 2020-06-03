@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.activities.SettingsActivity;
@@ -35,8 +35,7 @@ public class NoteFileManager {
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.write(body.getBytes());
                 fos.close();
-                Log.d(TAG, "File Saved!");
-                scanFile(mContext, file, SettingsActivity.MIME_TEXT);
+                scanFile(mContext, file, getMime(file));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -56,7 +55,7 @@ public class NoteFileManager {
                 fos.close();
                 oos.close();
                 Utils.showToast(mContext, "File Saved!");
-              scanFile(mContext, file, SettingsActivity.MIME_FILE);
+              scanFile(mContext, file, getMime(file));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -103,6 +102,12 @@ public class NoteFileManager {
     private boolean checkPermission(String permission) {
         int check = ContextCompat.checkSelfPermission(mContext, permission);
         return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
+    // Возвращает mime из имени файла
+    private String getMime(File file) {
+        String[] parts = file.getName().split("\\.");
+        return parts[parts.length - 1];
     }
 
 }
