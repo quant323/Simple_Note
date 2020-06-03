@@ -1,5 +1,6 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -36,11 +37,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private static final String MAIN_FOLDER = "Simple Note";
     private static final String BACKUP_FILE_NAME = "note_backup1";
     private static final String BACKUP_FOLDER = "backup";
+    private static final String MIME_TEXT = "txt";
+    private static final String MIME_FILE = "bac";
 
-    private static final int REQUEST_CODE = 1;
-
-    public static final String MIME_TEXT = "txt";
-    public static final String MIME_FILE = "bac";
+    private static final int REQUEST_EXPORT_TO_TEXT = 1;
+    private static final int REQUEST_EXPORT_TO_FILE = 2;
+    private static final int REQUEST_IMPORT_FROM_FILE = 3;
 
     private List<Folder> mFolderList;
     private List<Note> mNoteList;
@@ -80,42 +82,36 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.settings_export_item:
-                Toast.makeText(this, "Export files", Toast.LENGTH_SHORT).show();
-                exportNotesToFile();
-                break;
-            case R.id.settings_import_item:
-                Toast.makeText(this, "Import files", Toast.LENGTH_SHORT).show();
-                importNotesFromFile();
-                break;
-            case R.id.settings_export_to_text:
-                exportNotesToText();
-                break;
-        }
-    }
+        if (isExternalStorageWritable()) {
+            switch (v.getId()) {
+                case R.id.settings_export_item:
+                    if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                        exportNotesToFile();
+                    else ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXPORT_TO_FILE);
+                    break;
 
-    // Экспортирует заметки в текстовые файлы
-    private void exportNotesToText() {
-        if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            File mainFolderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER);
-            if(!mainFolderPath.exists())
-                mainFolderPath.mkdirs();
-            for (Folder folder : mFolderList) {
-                File folderPath = new File(mainFolderPath + "/" + folder.getName());
-                folderPath.mkdirs();
-                List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
-                for(Note note : notesInFolder) {
-                    File file = new File(folderPath + "/" + note.getTitle() + "." + MIME_TEXT);
-                    mFileManager.exportTextToFile(file, note.getBody());
-                }
+                case R.id.settings_import_item:
+                    if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+                        importNotesFromFile();
+                    else ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_IMPORT_FROM_FILE);
+                    break;
+
+                case R.id.settings_export_to_text:
+                    if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                        exportNotesToText();
+                    else ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXPORT_TO_TEXT);
+                    break;
+
+                default: break;
             }
-            createSimpleDialog(getString(R.string.d_export_finished_title),
-                    getString(R.string.d_export_notes_as_text_path, mainFolderPath))
-                    .show();
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.d_fail_to_read_external_storage)
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
         }
     }
 
@@ -156,6 +152,24 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     getString(R.string.d_import_failed_message_1)).show();
         } else createSimpleDialog(getString(R.string.d_import_failed_title),
                 getString(R.string.d_import_failed_message_2)).show();
+    }
+
+    private void exportNotesToText() {
+            File mainFolderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER);
+            if(!mainFolderPath.exists())
+                mainFolderPath.mkdirs();
+            for (Folder folder : mFolderList) {
+                File folderPath = new File(mainFolderPath + "/" + folder.getName());
+                folderPath.mkdirs();
+                List<Note> notesInFolder = Utils.getNotesFromFolder(mNoteList, folder);
+                for(Note note : notesInFolder) {
+                    File file = new File(folderPath + "/" + note.getTitle() + "." + MIME_TEXT);
+                    mFileManager.exportTextToFile(file, note.getBody());
+                }
+            }
+            createSimpleDialog(getString(R.string.d_export_finished_title),
+                    getString(R.string.d_export_notes_as_text_path, mainFolderPath))
+                    .show();
     }
 
 
@@ -233,5 +247,34 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         return (check == PackageManager.PERMISSION_GRANTED);
     }
 
+    @Override
+    public void onRequestPermissionsResult
+            (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            switch (requestCode) {
+
+                case REQUEST_EXPORT_TO_TEXT:
+                    Toast.makeText(this, "Write Text Granted!", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case REQUEST_EXPORT_TO_FILE:
+                    Toast.makeText(this, "Write File Granted!", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case REQUEST_IMPORT_FROM_FILE:
+                    Toast.makeText(this, "Import Granted!", Toast.LENGTH_SHORT).show();
+                    break;
+
+                default: break;
+            }
+
+        } else Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isExternalStorageWritable() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
 
 }
