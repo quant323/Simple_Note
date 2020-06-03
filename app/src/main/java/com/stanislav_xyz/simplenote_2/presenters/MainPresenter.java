@@ -102,15 +102,15 @@ public class MainPresenter {
     }
 
     public void onMenuRenamePressed() {
-        final EditText newFolderName_ET = Utils.createEditText(mActivity,
+        final EditText folderName_ET = Utils.createEditText(mActivity,
                 mCurFolder.getName(), null);
         new AlertDialog.Builder(mActivity)
                 .setMessage(R.string.action_rename_folder)
-                .setView(newFolderName_ET)
+                .setView(folderName_ET)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        renameFolder(newFolderName_ET.getText().toString(), mCurFolder);
+                        renameFolder(folderName_ET.getText().toString(), mCurFolder);
                     }
                 }).show();
     }
@@ -185,15 +185,15 @@ public class MainPresenter {
     }
 
     public void onNavAddFolderPressed() {
-        final EditText newFolderName_ET = Utils.createEditText(mActivity, null,
+        final EditText folderName_ET = Utils.createEditText(mActivity, null,
                 mActivity.getString(R.string.d_create_folder_hint));
         new AlertDialog.Builder(mActivity)
                 .setMessage(R.string.action_rename_folder)
-                .setView(newFolderName_ET)
+                .setView(folderName_ET)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        createNewFolder(newFolderName_ET.getText().toString());
+                        createNewFolder(folderName_ET.getText().toString());
                         mMainInterface.setItemsVisibility(true);
                     }
                 }).show();

@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.stanislav_xyz.simplenote_2.model.Note;
 import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -105,11 +107,27 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         String path = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
         String notesAsString = convertListToString(mNoteList);
         String foldersAsString = convertListToString(mFolderList);
-        mFileManager.writeFile(path, BACKUP_FILE_NAME + "." + MIME_FILE,
-                notesAsString, foldersAsString);
-        createSimpleDialog(getString(R.string.d_export_finished_title),
-                getString(R.string.d_export_backup_path, path))
-                .show();
+
+        File filePath = new File(path + "/" + BACKUP_FILE_NAME + "." + MIME_FILE);
+        if (filePath.exists()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Attention!")
+                    .setMessage("Backup file already exists.\nDo you want to overwrite it?")
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        } else {
+            mFileManager.writeFile(path, BACKUP_FILE_NAME + "." + MIME_FILE,
+                    notesAsString, foldersAsString);
+            createSimpleDialog(getString(R.string.d_export_finished_title),
+                    getString(R.string.d_export_backup_path, path))
+                    .show();
+        }
     }
 
     private void importNotesFromFile() {
@@ -119,13 +137,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         List<Folder> importedFolders;
         int uniqueNotes;
         int uniqueFolders;
+
         if (data != null) {
-//            for (int i = 0; i < data.length; i++) {
-//                if (restoreNotesFromString((String) data[i]) instanceof )
-//            }
-//
-
-
             importedNotes = restoreNotesFromString((String) data[0]);
             importedFolders = restoreFoldersFromString((String)data[1]);
             uniqueNotes = mergeNotes(mNoteList, importedNotes);

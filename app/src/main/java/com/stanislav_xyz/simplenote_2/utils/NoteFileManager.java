@@ -5,14 +5,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
-import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 
 import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.activities.SettingsActivity;
-import com.stanislav_xyz.simplenote_2.model.Folder;
-import com.stanislav_xyz.simplenote_2.model.Note;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 
 import androidx.core.content.ContextCompat;
 
@@ -56,9 +52,9 @@ public class NoteFileManager {
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 // Сперва записывем число, равное количеству записываемых объектов
                 oos.writeInt(objects.length);
-                for (Object object : objects) {
+                // Затем записываем сами объекты
+                for (Object object : objects)
                     oos.writeObject(object);
-                }
                 fos.close();
                 oos.close();
                 Utils.showToast(mContext, "File Saved!");
@@ -78,6 +74,7 @@ public class NoteFileManager {
                 // Читаем из файла int, в котором записано число находящихся в файле объектов
                 int arrayLength = ois.readInt();
                 Object[] objects = new Object[arrayLength];
+                // Затем читаем сами объекты
                 for (int i = 0; i < arrayLength; i++)
                     objects[i] = ois.readObject();
                 fis.close();
