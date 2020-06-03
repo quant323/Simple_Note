@@ -46,7 +46,6 @@ public class NoteFileManager {
 
     public void writeObjectsToFile(File file, Object... objects) {
         if (isExternalStorageWritable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//            File noteFile = createFile(pathName, fileName);
             try {
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -65,11 +64,10 @@ public class NoteFileManager {
         } else Utils.showToast(mContext, R.string.mes_permission_denied);
     }
 
-    public Object[] readObjectsFromFile(String pathName, String fileName) {
+    public Object[] readObjectsFromFile(File file) {
         if (isExternalStorageReadable() && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            File noteFile = createFile(pathName, fileName);
             try {
-                FileInputStream fis = new FileInputStream(noteFile);
+                FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 // Читаем из файла int, в котором записано число находящихся в файле объектов
                 int arrayLength = ois.readInt();

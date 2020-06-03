@@ -30,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private static final String TAG = "myTag";
     private static final String MAIN_FOLDER = "Simple Note";
-    private static final String BACKUP_FILE_NAME = "note_backup1_spb";
+    private static final String BACKUP_FILE_NAME = "note_backup1";
     private static final String BACKUP_FOLDER = "backup";
 
     public static final String MIME_TEXT = "txt";
@@ -124,22 +124,35 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void importNotesFromFile() {
-        String path = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
-        Object[] data = mFileManager.readObjectsFromFile(path, BACKUP_FILE_NAME + "." + MIME_FILE);
-        List<Note> importedNotes;
-        List<Folder> importedFolders;
-        int uniqueNotes;
-        int uniqueFolders;
-        if (data != null) {
-            importedNotes = restoreNotesFromString((String) data[0]);
-            importedFolders = restoreFoldersFromString((String)data[1]);
-            uniqueNotes = mergeNotes(mNoteList, importedNotes);
-            uniqueFolders = mergeFolders(mFolderList, importedFolders);
-            createSimpleDialog(getString(R.string.d_notes_imported_title),
-                    getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
-                    .show();
-        } else createSimpleDialog(getString(R.string.d_import_failed_title), null).show();
+        String folderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
+        final File file = new File(folderPath + "/" + BACKUP_FILE_NAME + "." + MIME_FILE);
+        if (file.exists()) {
+            Object[] data = mFileManager.readObjectsFromFile(file);
+            if (data != null) {
+                List<Note> importedNotes = restoreNotesFromString((String) data[0]);
+                List<Folder> importedFolders = restoreFoldersFromString((String)data[1]);
+                int uniqueNotes = mergeNotes(mNoteList, importedNotes);
+                int uniqueFolders = mergeFolders(mFolderList, importedFolders);
+                createSimpleDialog(getString(R.string.d_notes_imported_title),
+                        getString(R.string.d_notes_folders_imported, uniqueNotes, uniqueFolders))
+                        .show();
+            } else createSimpleDialog(getString(R.string.d_import_failed_title),
+                    getString(R.string.d_import_failed_message_1)).show();
+        } else createSimpleDialog(getString(R.string.d_import_failed_title),
+                getString(R.string.d_import_failed_message_2)).show();
     }
+
+
+    // Сохраняет заметки и папки в файл
+    private void createBackupFile(File file, String folderPath) {
+        String notesAsString = convertListToString(mNoteList);
+        String foldersAsString = convertListToString(mFolderList);
+        mFileManager.writeObjectsToFile(file, notesAsString, foldersAsString);
+        createSimpleDialog(getString(R.string.d_export_finished_title),
+                getString(R.string.d_export_backup_path, folderPath))
+                .show();
+    }
+
 
     // Работа с Gson
     private String convertListToString(List<?> list) {
@@ -157,16 +170,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         Gson gson = new Gson();
         Type type = new TypeToken<List<Folder>>(){}.getType();
         return gson.fromJson(folders, type);
-    }
-
-    // Сохраняет заметки и папки в файл
-    private void createBackupFile(File file, String folderPath) {
-        String notesAsString = convertListToString(mNoteList);
-        String foldersAsString = convertListToString(mFolderList);
-        mFileManager.writeObjectsToFile(file, notesAsString, foldersAsString);
-        createSimpleDialog(getString(R.string.d_export_finished_title),
-                getString(R.string.d_export_backup_path, folderPath))
-                .show();
     }
 
     // Приверяет, содержится ли уже такая заметка в листе. Если нет - добавляет заметку в хранилище.

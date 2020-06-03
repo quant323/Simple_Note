@@ -37,6 +37,8 @@
     <string name="d_about_message">Simple Note v1.0</string>
     <string name="d_notes_imported_title">Import Finished!</string>
     <string name="d_import_failed_title">Import Failed! :(</string>
+    <string name="d_import_failed_message_1">Backup file is empty!</string>
+    <string name="d_import_failed_message_2">Backup file does not exist!</string>
     <string name="d_notes_folders_imported">%d notes imported\n%d folders imported</string>
     <string name="d_export_finished_title">Export Finished!</string>
     <string name="d_export_notes_as_text_path">Notes saved in:\n%s</string>
