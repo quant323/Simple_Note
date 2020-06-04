@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 public class NotePresenter {
 
-    private static final int MAX_TITLE_LENGTH = 25;
+    private static final int MAX_TITLE_LENGTH = 20;
 
     private NoteInterface mNoteInterface;
     private FragmentActivity mActivity;

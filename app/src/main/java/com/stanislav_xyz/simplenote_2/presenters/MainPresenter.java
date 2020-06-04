@@ -113,7 +113,8 @@ public class MainPresenter {
                     public void onClick(DialogInterface dialog, int which) {
                         renameFolder(folderName_ET.getText().toString(), mCurFolder);
                     }
-                }).show();
+                }).setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     public void onMenuCleanBinPressed() {
@@ -198,7 +199,8 @@ public class MainPresenter {
                         createNewFolder(folderName_ET.getText().toString());
                         mMainInterface.setItemsVisibility(true);
                     }
-                }).show();
+                }).setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     public void onNavNormalFolderPressed(int id) {

@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:transitionName="@string/shared_transition"
+        style="@style/TransitionAnimation"
         tools:text="First note" />
 
     <TextView

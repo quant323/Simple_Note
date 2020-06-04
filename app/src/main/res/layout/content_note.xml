@@ -9,6 +9,8 @@
     android:paddingLeft="4dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+
+
     <EditText
         android:id="@+id/note_editText"
         android:layout_width="match_parent"
@@ -17,6 +19,6 @@
         android:hint="@string/hint_note_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textIsSelectable="false"
-        android:transitionName="@string/shared_transition"/>
+        style="@style/TransitionAnimation"/>
 
 </LinearLayout>
