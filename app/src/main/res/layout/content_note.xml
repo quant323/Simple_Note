@@ -9,15 +9,22 @@
     android:paddingLeft="4dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <EditText
             android:id="@+id/note_editText"
             style="@style/TransitionAnimation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:gravity="top|start"
             android:hint="@string/hint_note_text"
-            android:inputType="text"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textIsSelectable="false" />
+
+    </ScrollView>
+
 
 </LinearLayout>
