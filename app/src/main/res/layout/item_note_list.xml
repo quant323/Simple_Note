@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        tools:text="First note"/>
+        android:transitionName="@string/shared_transition"
+        tools:text="First note" />
 
     <TextView
         android:id="@+id/note_date_textView"

@@ -1,10 +1,12 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -77,8 +79,7 @@ public class MainActivity extends AppCompatActivity
             curFolderId = savedInstanceState.getInt(STATE_CUR_FOLDER_ID);
             mItemsVisibleState = savedInstanceState.getBoolean(STATE_MENU_ITEMS);
             mMenuEnableState = savedInstanceState.getBoolean(STATE_DEL_MENU);
-        }
-        else curFolderId = MainPresenter.INITIAL_FOLDER_ID;
+        } else curFolderId = MainPresenter.INITIAL_FOLDER_ID;
 
         mMainPresenter = new MainPresenter(this, this, curFolderId);
 
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainPresenter.onFabPressed();
+                mMainPresenter.onFabPressed(view);
             }
         });
 
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         mAdapter.setOnItemClickListener(new NoteListAdapter.ClickListener() {
             @Override
             public void onItemClickListener(View v, Note note) {
-                mMainPresenter.onItemNotePressed(note);
+                mMainPresenter.onItemNotePressed(v, note);
             }
         });
     }
@@ -126,11 +127,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
+        //todo app crashes here coz info is null. But why?
         final int position = item.getGroupId();
         Note note = mAdapter.getSortedNotes().get(position);
         switch (item.getItemId()) {
             case NoteListAdapter.CONTEXT_OPEN_ID:
-                mMainPresenter.onContextOpenPressed(note);
+                View v = mAdapter.getContextMenuView();
+                if (v != null)
+                    mMainPresenter.onContextOpenPressed(v, note);
                 return true;
             case NoteListAdapter.CONTEXT_DEL_ID:
                 mMainPresenter.onContextDelPressed(note);

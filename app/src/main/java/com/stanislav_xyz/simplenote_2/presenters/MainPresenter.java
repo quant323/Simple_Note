@@ -1,8 +1,11 @@
 package com.stanislav_xyz.simplenote_2.presenters;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
+import android.view.View;
 import android.widget.EditText;
 
 import com.stanislav_xyz.simplenote_2.R;
@@ -89,7 +92,7 @@ public class MainPresenter {
         }
     }
 
-    public void onFabPressed() {
+    public void onFabPressed(View v) {
         startNoteActivity(mCurFolder, null);
     }
 
@@ -131,24 +134,25 @@ public class MainPresenter {
         } else mMainInterface.showSnack(R.string.mes_bin_is_empty);
     }
 
-    public void onContextOpenPressed(Note note) {
-        startNoteActivity(mCurFolder, note);
+    public void onContextOpenPressed(View v, Note note) {
+        startNoteActivityWithAnimation(v, note, mCurFolder);
+        //       startNoteActivity(mCurFolder, note);
     }
 
     public void onContextDelPressed(final Note note) {
         if (mCurFolder != mBinFolder) {
-           new AlertDialog.Builder(mActivity)
-                   .setTitle(R.string.d_delete_title)
-                   .setMessage(R.string.d_delete_message)
-                   .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           note.setFolderName(mBinFolder.getName());
-                           mNoteViewModel.update(note);
-                           mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
-                       }
-                   }).setNegativeButton(R.string.cancel, null)
-                   .show();
+            new AlertDialog.Builder(mActivity)
+                    .setTitle(R.string.d_delete_title)
+                    .setMessage(R.string.d_delete_message)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            note.setFolderName(mBinFolder.getName());
+                            mNoteViewModel.update(note);
+                            mMainInterface.showSnack(R.string.mes_note_moved_to_bin);
+                        }
+                    }).setNegativeButton(R.string.cancel, null)
+                    .show();
         } else {
             mNoteViewModel.deleteNote(note);
             mMainInterface.showSnack(R.string.mes_note_deleted);
@@ -203,8 +207,9 @@ public class MainPresenter {
         mMainInterface.setEnableMenuItems(mCurFolder.getId() != INITIAL_FOLDER_ID);
     }
 
-    public void onItemNotePressed(Note note) {
-        startNoteActivity(mCurFolder, note);
+    public void onItemNotePressed(View v, Note note) {
+        startNoteActivityWithAnimation(v, note, mCurFolder);
+        //       startNoteActivity(mCurFolder, note);
     }
 
     public int getCurFolderId() {
@@ -267,6 +272,19 @@ public class MainPresenter {
         intent.putExtra(EXTRA_FOLDER, folder);
         intent.putExtra(EXTRA_NOTE, note);
         mActivity.startActivity(intent);
+    }
+
+    private void startNoteActivityWithAnimation(View v, Note note, Folder folder) {
+        Intent intent = new Intent(mActivity, NoteActivity.class);
+        intent.putExtra(EXTRA_FOLDER, folder);
+        intent.putExtra(EXTRA_NOTE, note);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mActivity,
+                    v.findViewById(R.id.note_title_textView), mActivity.getString(R.string.shared_transition));
+            mActivity.startActivity(intent, options.toBundle());
+        } else {
+            mActivity.startActivity(intent);
+        }
     }
 
     private void startSettingsActivity() {

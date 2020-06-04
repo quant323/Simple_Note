@@ -64,4 +64,6 @@
     <string name="set_export_to_text_title">Export Notes to Text</string>
     <string name="set_export_to_text_text">Export notes to text files</string>
 
+    <string name="shared_transition">Common Shared Element</string> <!--Do not translate!-->
+
 </resources>

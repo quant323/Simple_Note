@@ -1,6 +1,7 @@
 package com.stanislav_xyz.simplenote_2.activities;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,7 +40,11 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAfterTransition();
+                } else {
+                    finish();
+                }
             }
         });
 

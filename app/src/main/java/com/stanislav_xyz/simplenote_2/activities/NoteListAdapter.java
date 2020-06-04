@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
@@ -22,6 +23,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
     public static final int CONTEXT_OPEN_ID = 100;
     public static final int CONTEXT_DEL_ID = 101;
     public static final int CONTEXT_MOVE_ID = 102;
+
+    private View mContextMenuView;
 
     private SortedList<Note> mSortedNotes;
     private ClickListener mClickListener;
@@ -105,11 +108,16 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
         void onItemClickListener(View v, Note note);
     }
 
+    public View getContextMenuView() {
+        return mContextMenuView;
+    }
+
 
     class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final TextView noteTitle_tV;
         private final TextView date_tv;
+
 
         // Конструктор
         public NoteViewHolder(@NonNull final View itemView) {
@@ -135,10 +143,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            //todo needs call super?
             menu.add(this.getAdapterPosition(), CONTEXT_OPEN_ID, 0, R.string.action_context_open);
             menu.add(this.getAdapterPosition(), CONTEXT_DEL_ID, 0, R.string.action_context_delete);
             menu.add(this.getAdapterPosition(), CONTEXT_MOVE_ID, 0, R.string.action_context_move);
+            mContextMenuView = v;
         }
+
     }
 
 }
