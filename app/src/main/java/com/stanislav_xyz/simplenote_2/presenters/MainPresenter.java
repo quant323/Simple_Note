@@ -106,7 +106,7 @@ public class MainPresenter {
         final EditText folderName_ET = Utils.createEditText(mActivity,
                 mCurFolder.getName(), null);
         new AlertDialog.Builder(mActivity)
-                .setMessage(R.string.action_rename_folder)
+                .setTitle(R.string.action_rename_folder)
                 .setView(folderName_ET)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -191,7 +191,7 @@ public class MainPresenter {
         final EditText folderName_ET = Utils.createEditText(mActivity, null,
                 mActivity.getString(R.string.d_create_folder_hint));
         new AlertDialog.Builder(mActivity)
-                .setMessage(R.string.action_rename_folder)
+                .setTitle(R.string.nav_add_new_folder)
                 .setView(folderName_ET)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override

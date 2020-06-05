@@ -40,11 +40,10 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                     finishAfterTransition();
-                } else {
-                    finish();
-                }
+                else finish();
+
             }
         });
 
@@ -59,6 +58,7 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
             }
         });
         mNotePresenter = new NotePresenter(this, this, getIntent());
+
     }
 
     @Override
@@ -125,9 +125,19 @@ public class NoteActivity extends AppCompatActivity implements NoteInterface {
             InputMethodManager methodManager =
                     (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             methodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
+//            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         } else {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
+
+//        if (inFab) {
+//            InputMethodManager methodManager =
+//                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            methodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+//        } else {
+//            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//        }
     }
 
 }

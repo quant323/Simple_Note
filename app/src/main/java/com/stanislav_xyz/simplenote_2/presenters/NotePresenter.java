@@ -40,8 +40,9 @@ public class NotePresenter {
             mNoteInterface.setTextEditText(mNote.getBody());
             // Превращает EditText в TextView
             mNoteInterface.setEditToEditText(false);
-        } else {
             mNoteInterface.showKeyBoard(false);
+        } else {
+ //           mNoteInterface.showKeyBoard(true);
             mNoteInterface.hideFab();
         }
     }
