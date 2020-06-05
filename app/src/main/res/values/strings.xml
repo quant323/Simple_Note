@@ -43,7 +43,7 @@
     <string name="d_export_finished_title">Export Finished!</string>
     <string name="d_export_notes_as_text_path">Notes saved in:\n%s</string>
     <string name="d_export_backup_path">File saved in:\n%s</string>
-    <string name="d_attention_title">ATTENTION!</string>
+    <string name="d_attention_title">Attention!</string>
     <string name="d_attention_message">Backup file already exists.\nDo you want to overwrite it?</string>
     <string name="d_fail_to_read_external_storage">External Storage is not available!</string>
 
