@@ -41,10 +41,7 @@ public class NotePresenter {
             // Превращает EditText в TextView
             mNoteInterface.setEditToEditText(false);
             mNoteInterface.showKeyBoard(false);
-        } else {
- //           mNoteInterface.showKeyBoard(true);
-            mNoteInterface.hideFab();
-        }
+        } else mNoteInterface.hideFab();
     }
 
     public void onFabPressed() {

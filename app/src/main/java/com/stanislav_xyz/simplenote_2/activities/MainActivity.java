@@ -1,5 +1,14 @@
+/*
+ * *
+ *  * Created by Stanislav Zaytsev on 05.06.20 18:03
+ *  * Copyright (c) 2020 . All rights reserved.
+ *  * Last modified 04.06.20 21:55
+ *
+ */
+
 package com.stanislav_xyz.simplenote_2.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -33,9 +42,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainInterface {
 
     public static final String TAG = "myTag";
+    public static final String APP_PREFERENCES = "app_settings";
+    public static final String APP_PREFERENCES_ANIMATION = "app_animation";
+
     private static final String STATE_CUR_FOLDER_ID = "cur_folder_id";
     private static final String STATE_MENU_ITEMS = "menu_items_state";
     private static final String STATE_DEL_MENU = "del_menu_state";
+
+    private static SharedPreferences mSharedSettings;
 
     private boolean mItemsVisibleState = true;
     private boolean mMenuEnableState = false;
@@ -71,6 +85,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         mNavigationMenu = navigationView.getMenu();
+
+        mSharedSettings = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
 
         int curFolderId;
         if (savedInstanceState != null) {
@@ -184,6 +200,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mSharedSettings.contains(APP_PREFERENCES_ANIMATION)) {
+            boolean isAnimEnabled = mSharedSettings.getBoolean(APP_PREFERENCES_ANIMATION, true);
+            mMainPresenter.setAnimEnabled(isAnimEnabled);
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt(STATE_CUR_FOLDER_ID, mMainPresenter.getCurFolderId());
         outState.putBoolean(STATE_MENU_ITEMS, mItemsVisibleState);
@@ -243,6 +268,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showSnack(int id) {
         Snackbar.make(findViewById(R.id.coordinator_main), id, Snackbar.LENGTH_LONG).show();
+    }
+
+    public static SharedPreferences getSharedSettings() {
+        return mSharedSettings;
     }
 
 }

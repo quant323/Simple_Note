@@ -11,11 +11,14 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -24,6 +27,7 @@ import com.stanislav_xyz.simplenote_2.R;
 import com.stanislav_xyz.simplenote_2.data.NoteViewModel;
 import com.stanislav_xyz.simplenote_2.model.Folder;
 import com.stanislav_xyz.simplenote_2.model.Note;
+import com.stanislav_xyz.simplenote_2.presenters.MainPresenter;
 import com.stanislav_xyz.simplenote_2.utils.NoteFileManager;
 import com.stanislav_xyz.simplenote_2.utils.Utils;
 
@@ -38,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private static final String BACKUP_FILE_NAME = "note_backup1";
     private static final String BACKUP_FOLDER = "backup";
     private static final String MIME_TEXT = "txt";
-    private static final String MIME_FILE = "bac";
+    private static final String MIME_BACKUP_FILE = "bac";
 
     private static final int REQUEST_EXPORT_TO_TEXT = 1;
     private static final int REQUEST_EXPORT_TO_FILE = 2;
@@ -48,7 +52,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private List<Note> mNoteList;
 
     private NoteFileManager mFileManager;
-
     private NoteViewModel mNoteViewModel;
 
     @Override
@@ -68,6 +71,17 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.settings_export_item).setOnClickListener(this);
         findViewById(R.id.settings_import_item).setOnClickListener(this);
         findViewById(R.id.settings_export_to_text).setOnClickListener(this);
+
+        Switch animSwitch = findViewById(R.id.animation_switch);
+        animSwitch.setChecked(getIntent().getBooleanExtra(MainPresenter.EXTRA_ANIM, true));
+        animSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = MainActivity.getSharedSettings().edit();
+                editor.putBoolean(MainActivity.APP_PREFERENCES_ANIMATION, isChecked);
+                editor.apply();
+            }
+        });
 
         mFileManager = new NoteFileManager(this);
         mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
@@ -117,7 +131,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private void exportNotesToFile() {
         final String folderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
-        final File file = new File(folderPath + "/" + BACKUP_FILE_NAME + "." + MIME_FILE);
+        final File file = new File(folderPath + "/" + BACKUP_FILE_NAME + "." + MIME_BACKUP_FILE);
         if (file.exists()) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.d_attention_title)
@@ -137,7 +151,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private void importNotesFromFile() {
         String folderPath = Environment.getExternalStoragePublicDirectory(MAIN_FOLDER) + "/" + BACKUP_FOLDER;
-        final File file = new File(folderPath + "/" + BACKUP_FILE_NAME + "." + MIME_FILE);
+        final File file = new File(folderPath + "/" + BACKUP_FILE_NAME + "." + MIME_BACKUP_FILE);
         if (file.exists()) {
             Object[] data = mFileManager.readObjectsFromFile(file);
             if (data != null) {
@@ -201,7 +215,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         return gson.fromJson(folders, type);
     }
 
-    // Приверяет, содержится ли уже такая заметка в листе. Если нет - добавляет заметку в хранилище.
+    // Проверяет, содержится ли уже такая заметка в листе. Если нет - добавляет заметку в хранилище.
     // Заметки считаются одниковыми, если равны их id (см. метод equals() клааса Note)
     // Возвращаемое значение - кол-во уникальных заметок
     private int mergeNotes(List<Note> existingNotes, List<Note> importedNotes) {
@@ -216,7 +230,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         return uniqueNotes;
     }
 
-    // Приверяет, содержится ли уже такая папка в листе. Если нет - добавляет папку в хранилище.
+    // Проверяет, содержится ли уже такая папка в листе. Если нет - добавляет папку в хранилище.
     // Папки считаются одниковыми, если равны их имена (см. метод equals() клааса Folder).
     // Возвращаемое значение - кол-во уникальных папок
     private int mergeFolders(List<Folder> existingFolders, List<Folder> importedFolders) {
@@ -239,7 +253,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, null);
     }
-
 
     private boolean checkPermission(String permission) {
         int check = ContextCompat.checkSelfPermission(this, permission);

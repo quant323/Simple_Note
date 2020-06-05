@@ -109,4 +109,32 @@
         android:background="?android:attr/listDivider"
         android:visibility="visible" />
 
+    <LinearLayout
+        android:id="@+id/settings_enable_animation"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingLeft="8dp"
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp">
+
+        <Switch
+            android:id="@+id/animation_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/set_animation"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        android:visibility="visible" />
+
 </LinearLayout>

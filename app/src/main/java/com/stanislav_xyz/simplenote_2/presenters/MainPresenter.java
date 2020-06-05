@@ -30,10 +30,12 @@ public class MainPresenter {
     public static final int INITIAL_FOLDER_ID = 0;
     public static final String EXTRA_FOLDER = "NoteActivity.EXTRA_FOLDER";
     public static final String EXTRA_NOTE = "NoteActivity.EXTRA_NOTE";
+    public static final String EXTRA_ANIM = "SettingsActivity.ANIM";
 
     private MainInterface mMainInterface;
     private FragmentActivity mActivity;
     private NoteViewModel mNoteViewModel;
+    private boolean mIsAnimEnabled = true;
 
     private List<Note> mNoteList;
     private List<Note> mNotesInCurFolder = new ArrayList<>();
@@ -74,9 +76,9 @@ public class MainPresenter {
 
     private void initDrawerMenu() {
         for (int i = 0; i < mFolderList.size(); i++) {
-            if (i != 0) {
+            if (i != 0)
                 mMainInterface.addDrawerMenuItem(mFolderList.get(i), R.drawable.ic_folder);
-            } else {
+            else {
                 mMainInterface.addDrawerMenuItem(mFolderList.get(i), R.drawable.ic_home);
                 mMainInterface.setCheckedDrawerMenuItem(mFolderList.get(i));
             }
@@ -93,7 +95,7 @@ public class MainPresenter {
     }
 
     public void onFabPressed(View v) {
-        startNoteActivity(mCurFolder, null);
+        startNoteActivity(v, null, mCurFolder,  false);
     }
 
     public void onMenuDelPressed() {
@@ -136,8 +138,7 @@ public class MainPresenter {
     }
 
     public void onContextOpenPressed(View v, Note note) {
-        startNoteActivityWithAnimation(v, note, mCurFolder);
-        //       startNoteActivity(mCurFolder, note);
+        startNoteActivity(v, note, mCurFolder, mIsAnimEnabled);
     }
 
     public void onContextDelPressed(final Note note) {
@@ -210,8 +211,7 @@ public class MainPresenter {
     }
 
     public void onItemNotePressed(View v, Note note) {
-        startNoteActivityWithAnimation(v, note, mCurFolder);
-        //       startNoteActivity(mCurFolder, note);
+        startNoteActivity(v, note, mCurFolder, mIsAnimEnabled);
     }
 
     public int getCurFolderId() {
@@ -220,6 +220,10 @@ public class MainPresenter {
 
     public static Folder getBinFolder() {
         return mBinFolder;
+    }
+
+    public void setAnimEnabled(boolean animEnabled) {
+        mIsAnimEnabled = animEnabled;
     }
 
     private void createNewFolder(String name) {
@@ -269,28 +273,20 @@ public class MainPresenter {
         mMainInterface.setToolbarTitle(mCurFolder.getName());
     }
 
-    private void startNoteActivity(Folder folder, Note note) {
+    private void startNoteActivity(View v, Note note, Folder folder, boolean isAnimEnabled) {
         Intent intent = new Intent(mActivity, NoteActivity.class);
         intent.putExtra(EXTRA_FOLDER, folder);
         intent.putExtra(EXTRA_NOTE, note);
-        mActivity.startActivity(intent);
-    }
-
-    private void startNoteActivityWithAnimation(View v, Note note, Folder folder) {
-        Intent intent = new Intent(mActivity, NoteActivity.class);
-        intent.putExtra(EXTRA_FOLDER, folder);
-        intent.putExtra(EXTRA_NOTE, note);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (isAnimEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mActivity,
                     v.findViewById(R.id.note_title_textView), mActivity.getString(R.string.shared_transition));
             mActivity.startActivity(intent, options.toBundle());
-        } else {
-            mActivity.startActivity(intent);
-        }
+        } else mActivity.startActivity(intent);
     }
 
     private void startSettingsActivity() {
         Intent intent = new Intent(mActivity, SettingsActivity.class);
+        intent.putExtra(EXTRA_ANIM, mIsAnimEnabled);
         mActivity.startActivity(intent);
     }
 
