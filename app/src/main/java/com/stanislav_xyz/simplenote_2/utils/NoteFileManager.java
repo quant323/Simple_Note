@@ -42,7 +42,7 @@ public class NoteFileManager {
                 oos.writeObject(object);
             fos.close();
             oos.close();
-            Utils.showToast(mContext, "File Saved!");
+//            Utils.showToast(mContext, "File Saved!");
             scanFile(mContext, file, getMime(file));
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class NoteFileManager {
                 objects[i] = ois.readObject();
             fis.close();
             ois.close();
-            Utils.showToast(mContext, "File Loaded!");
+//            Utils.showToast(mContext, "File Loaded!");
             return objects;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

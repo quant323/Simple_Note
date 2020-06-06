@@ -208,6 +208,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public static SharedPreferences getSharedSettings() {
+        return mSharedSettings;
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt(STATE_CUR_FOLDER_ID, mMainPresenter.getCurFolderId());
@@ -268,10 +272,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void showSnack(int id) {
         Snackbar.make(findViewById(R.id.coordinator_main), id, Snackbar.LENGTH_LONG).show();
-    }
-
-    public static SharedPreferences getSharedSettings() {
-        return mSharedSettings;
     }
 
 }

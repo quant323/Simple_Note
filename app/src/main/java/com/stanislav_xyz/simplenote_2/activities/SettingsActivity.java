@@ -196,7 +196,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 .show();
     }
 
-
     // Работа с Gson
     private String convertListToString(List<?> list) {
         Gson gson = new Gson();
@@ -268,20 +267,22 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             switch (requestCode) {
 
                 case REQUEST_EXPORT_TO_TEXT:
-                    Toast.makeText(this, "Write Text Granted!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Write Text Granted!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Write Text Granted!");
                     break;
 
                 case REQUEST_EXPORT_TO_FILE:
-                    Toast.makeText(this, "Write File Granted!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Write File Granted!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Write File Granted!");
                     break;
 
                 case REQUEST_IMPORT_FROM_FILE:
-                    Toast.makeText(this, "Import Granted!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Import Granted!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Import Granted!");
                     break;
 
                 default: break;
             }
-
         } else Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
     }
 
