@@ -90,6 +90,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onChanged(List<Note> notes) {
                 mNoteList = notes;
+                Log.d(TAG, "onChanged: ");
             }
         });
     }

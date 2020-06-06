@@ -1,8 +1,6 @@
 /*
  * *
  *  * Created by Stanislav Zaytsev on 05.06.20 18:03
- *  * Copyright (c) 2020 . All rights reserved.
- *  * Last modified 04.06.20 21:55
  *
  */
 
@@ -41,7 +39,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainInterface {
 
-    public static final String TAG = "myTag";
     public static final String APP_PREFERENCES = "app_settings";
     public static final String APP_PREFERENCES_ANIMATION = "app_animation";
 
@@ -141,7 +138,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        //todo app crashes here coz info is null. But why?
         final int position = item.getGroupId();
         Note note = mAdapter.getSortedNotes().get(position);
         switch (item.getItemId()) {

@@ -16,21 +16,13 @@ class NoteRepository {
     private WorkWithSharedPref mSharedPref;
     private List<Folder> mAllFolders;
 
-    private static NoteRepository mRepository;
-
     // Конструктор
-    private NoteRepository(Application application) {
+    public NoteRepository(Application application) {
         NoteRoomDatabase db = NoteRoomDatabase.getDatabase(application);
         mNoteDao = db.noteDao();
         mAllNotes = mNoteDao.getAllNotes();
         mSharedPref = new WorkWithSharedPref(application.getApplicationContext());
         mAllFolders = mSharedPref.getFromSharedPref();
-    }
-
-    public static NoteRepository getInstance(Application application) {
-        if (mRepository == null)
-            mRepository = new NoteRepository(application);
-        return mRepository;
     }
 
     // Работа с заметками
