@@ -14,14 +14,14 @@ public class QueryAsyncTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        mAsyncBack.workInBackground();
+        mAsyncBack.onWorkInBackground();
         return null;
     }
 
 
     // Интерфейс
     public interface AsyncBack {
-        void workInBackground();
+        void onWorkInBackground();
     }
 
 }

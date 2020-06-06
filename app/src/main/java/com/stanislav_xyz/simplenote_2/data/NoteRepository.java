@@ -33,7 +33,7 @@ class NoteRepository {
     void insert(final Note note) {
         new QueryAsyncTask(new QueryAsyncTask.AsyncBack() {
             @Override
-            public void workInBackground() {
+            public void onWorkInBackground() {
                 mNoteDao.insert(note);
             }
         }).execute();
@@ -42,7 +42,7 @@ class NoteRepository {
     void delete(final Note note) {
         new QueryAsyncTask(new QueryAsyncTask.AsyncBack() {
             @Override
-            public void workInBackground() {
+            public void onWorkInBackground() {
                 mNoteDao.delete(note);
             }
         }).execute();
@@ -51,7 +51,7 @@ class NoteRepository {
     void update(final Note note) {
         new QueryAsyncTask(new QueryAsyncTask.AsyncBack() {
             @Override
-            public void workInBackground() {
+            public void onWorkInBackground() {
                 mNoteDao.update(note);
             }
         }).execute();

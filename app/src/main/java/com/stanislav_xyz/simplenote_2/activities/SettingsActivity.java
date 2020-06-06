@@ -90,7 +90,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onChanged(List<Note> notes) {
                 mNoteList = notes;
-                Log.d(TAG, "onChanged: ");
             }
         });
     }
@@ -224,7 +223,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             if (!existingNotes.contains(note)) {
                 mNoteViewModel.insert(note);
                 uniqueNotes++;
-                Log.d(TAG, "missing note - " + note.getTitle());
             }
         }
         return uniqueNotes;
@@ -241,7 +239,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 folder.setId(lastFolder.getId() + 1);
                 mNoteViewModel.insertFolder(folder);
                 uniqueFolders++;
-                Log.d(TAG, "missing folder - " + folder.getName());
             }
         }
         return uniqueFolders;
